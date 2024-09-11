@@ -40,10 +40,22 @@ form/has-label
 
 ## 异步（动态）数据用法
 
-[PlusColumn](/components/config.html) 配置中的 `options` 支持数组，computed，函数和 Promise。
+[PlusColumn](/components/config.html) 配置中的 `options` 支持数组，computed <el-tag  effect="dark">推荐</el-tag>，函数和 Promise。
 [PlusColumn](/components/config.html) 配置中的 `fieldProps`和`formItemProps` 支持对象 object，computed，函数和 Promise。
 
 **常见的使用场景是数据来自后端接口，这里调用后端接口，options 返回 [OptionsRow[]](/components/type.html#optionsrow)数组即可。**
+
+::: tip 提示
+`options` 建议优先使用 `computed`，可防止用函数在`columns`配置项数据变更后函数重复执行的问题。
+
+使用步骤为：
+
+- 1. `columns`配置项外面定义一个 `ref`数组
+- 2. 外部异步函数获取到值赋值到 `ref`
+- 3.  `columns`配置项里用 `computed`返回 `ref` 的 `value`
+
+参考下面<el-tag effect="dark">推荐写法</el-tag>代码示例。
+:::
 
 :::demo
 
@@ -357,7 +369,7 @@ form/all
 | `submitText`                                 | 提交按钮文字                                                                                                                                                                                                          | `string`                                                                                 | `提交`  | 否       |
 | `resetText`                                  | 重置按钮文字                                                                                                                                                                                                          | `string`                                                                                 | `重置`  | 否       |
 | `prevent`<el-tag>v0.1.13</el-tag>            | 阻止 el-form 的默认提交表单行为                                                                                                                                                                                       | `boolean`                                                                                | `false` | 否       |
-| `collapseTransition`<el-tag>v0.1.15</el-tag> | 是否需要表单变化动画，**在[PlusSearch](/components/search.html#search-attributes)和[PlusStepsForm ](/components/steps-form.html#stepsform-attributes)组件中效果明显**                                                                    | `boolean`                                                                                | `true`  | 否       |
+| `collapseTransition`<el-tag>v0.1.15</el-tag> | 是否需要表单变化动画，**在[PlusSearch](/components/search.html#search-attributes)和[PlusStepsForm ](/components/steps-form.html#stepsform-attributes)组件中效果明显**                                                 | `boolean`                                                                                | `true`  | 否       |
 | `collapseTransition`<el-tag>v0.1.15</el-tag> | 表单变化动画持续时长(单位：ms)                                                                                                                                                                                        | `number`                                                                                 | `300`   | 否       |
 | ...                                          | ...                                                                                                                                                                                                                   | ...                                                                                      | ...     | ...      |
 

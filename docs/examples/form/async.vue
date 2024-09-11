@@ -13,8 +13,10 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue'
-import type { PlusColumn, FieldValues } from 'plus-pro-components'
+import type { Ref } from 'vue'
+import { ref, computed, h, Fragment } from 'vue'
+import { ElTag } from 'element-plus'
+import type { PlusColumn, FieldValues, OptionsRow } from 'plus-pro-components'
 
 const state = ref<FieldValues>({
   status: '0',
@@ -42,7 +44,48 @@ const rules = {
   ]
 }
 
+// options推荐写法
+// 1. 定义一个 `ref`数组
+const options: Ref<OptionsRow[]> = ref([])
+// 2. 异步函数获取到值赋值到 `ref`
+const getOptions = async () => {
+  // 等待2s
+  await new Promise(resolve => {
+    setTimeout(() => {
+      resolve('')
+    }, 2000)
+  })
+  options.value = [
+    { label: '未解决', value: '0', color: 'red' },
+    { label: '已解决', value: '1', color: 'blue' }
+  ]
+}
+getOptions()
+
 const columns: PlusColumn[] = [
+  {
+    label: '状态',
+    width: 120,
+    prop: 'status',
+    valueType: 'select',
+    // options推荐写法
+    // 3. 用 computed 返回 ref 的 value
+    options: computed(() => options.value),
+    renderLabel: label =>
+      h(Fragment, null, [
+        h('span', label),
+        h(
+          ElTag,
+          {
+            effect: 'dark'
+          },
+          () => '推荐写法'
+        )
+      ]),
+    formItemProps: async () => {
+      return { labelWidth: '120px' }
+    }
+  },
   {
     label: '状态',
     width: 120,
