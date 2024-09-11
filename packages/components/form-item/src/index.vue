@@ -20,15 +20,7 @@
             />
           </template>
 
-          <slot
-            v-else
-            :name="getLabelSlotName(prop)"
-            :prop="prop"
-            :label="labelValue"
-            :field-props="customFieldProps"
-            :value-type="valueType"
-            :column="params"
-          >
+          <slot v-else :name="getLabelSlotName(prop)" v-bind="params">
             {{ currentLabel }}
           </slot>
 
@@ -57,11 +49,7 @@
       <slot
         v-else-if="$slots[getFieldSlotName(prop)]"
         :name="getFieldSlotName(prop)"
-        :prop="prop"
-        :label="labelValue"
-        :field-props="customFieldProps"
-        :value-type="valueType"
-        :column="props"
+        v-bind="params"
       />
 
       <el-select
@@ -196,7 +184,7 @@
 
 <script lang="ts" setup>
 import type { Component, Ref } from 'vue'
-import { ref, watch, computed, inject } from 'vue'
+import { ref, watch, computed, inject, unref } from 'vue'
 import type {
   PlusColumn,
   FieldValueType,
@@ -232,7 +220,8 @@ import {
   DatePickerValueIsArrayList,
   ValueIsArrayList,
   ValueIsNumberList,
-  TableFormFieldRefInjectionKey
+  TableFormFieldRefInjectionKey,
+  TableFormRowInfoInjectionKey
 } from '@plus-pro-components/constants'
 import { hasFieldComponent, getFieldComponent } from './form-item'
 
@@ -305,8 +294,16 @@ const state = ref<FieldValueType>()
 const customFieldPropsIsReady = ref(false)
 const valueIsReady = ref(false)
 const labelValue = computed(() => getLabel(props.label))
-const params = computed(() => ({ ...props, label: labelValue.value }))
 const formFieldRefs = inject(TableFormFieldRefInjectionKey, {}) as unknown as Ref<FormFieldRefsType>
+const tableRowInfo = inject(TableFormRowInfoInjectionKey, {}) as unknown as Ref<FormFieldRefsType>
+const params = computed(() => ({
+  ...props,
+  ...unref(tableRowInfo),
+  label: labelValue.value,
+  fieldProps: customFieldProps.value,
+  formItemProps: customFormItemProps.value,
+  options: customOptions.value
+}))
 
 /**
  * 默认值是数组的情况

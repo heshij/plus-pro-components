@@ -13,13 +13,19 @@
     @change="handleChange"
   >
     <!--表单单项的插槽 -->
-    <template v-if="$slots[getFieldSlotName(column.prop)]" #[getFieldSlotName(column.prop)]="data">
-      <slot :name="getFieldSlotName(column.prop)" v-bind="data" :row="subRow" />
+    <template
+      v-if="$slots[getFieldSlotName(column.prop)]"
+      #[getFieldSlotName(column.prop)]="scoped"
+    >
+      <slot :name="getFieldSlotName(column.prop)" v-bind="scoped" />
     </template>
 
     <!-- 表单el-form-item 下一行额外的内容 的插槽 -->
-    <template v-if="$slots[getExtraSlotName(column.prop)]" #[getExtraSlotName(column.prop)]="data">
-      <slot :name="getExtraSlotName(column.prop)" v-bind="data" :row="subRow" />
+    <template
+      v-if="$slots[getExtraSlotName(column.prop)]"
+      #[getExtraSlotName(column.prop)]="scoped"
+    >
+      <slot :name="getExtraSlotName(column.prop)" v-bind="scoped" />
     </template>
   </PlusForm>
 
@@ -191,7 +197,7 @@ import {
   setValue
 } from '@plus-pro-components/components/utils'
 import type { Ref } from 'vue'
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, provide } from 'vue'
 import type {
   PlusColumn,
   RecordType,
@@ -200,6 +206,7 @@ import type {
   OptionsRow
 } from '@plus-pro-components/types'
 import { useGetOptions } from '@plus-pro-components/hooks'
+import { TableFormRowInfoInjectionKey } from '@plus-pro-components/constants'
 import { PlusRender } from '@plus-pro-components/components/render'
 import { ElIcon, ElDivider } from 'element-plus'
 import { hasDisplayComponent, getDisplayComponent } from './display-item'
@@ -337,6 +344,9 @@ const isTagAndNoValue = computed(
     (displayValue.value === undefined || displayValue.value === null || displayValue.value === '')
 )
 
+/**
+ * 渲染参数
+ */
 const renderParams = computed(() => ({
   prop: props.column.prop,
   valueType: props.column.valueType,
@@ -344,9 +354,24 @@ const renderParams = computed(() => ({
   index: props.index,
   rowIndex: props.index,
   fieldProps: customFieldProps.value,
+  options: options.value,
   ...props.rest,
   column: { ...props.rest.column, ...props.column }
 }))
+
+/**
+ * 表单中注入行信息
+ */
+const tableRowInfo = computed(() => ({
+  row: subRow.value,
+  index: props.index,
+  rowIndex: props.index,
+  ...props.rest,
+  column: { ...props.rest.column, ...props.column }
+}))
+
+// 向表单中注入行信息
+provide(TableFormRowInfoInjectionKey, tableRowInfo)
 
 const imageUrl = computed(() => {
   const option = formatterValue.value

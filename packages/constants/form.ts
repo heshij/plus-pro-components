@@ -9,6 +9,11 @@ export const TableFormRefInjectionKey = Symbol('tableFormRefInjectionKey')
 export const TableFormFieldRefInjectionKey = Symbol('tableFormFieldRefInjectionKey')
 
 /**
+ * 表格里表单 表格行信息 provide(inject) key
+ */
+export const TableFormRowInfoInjectionKey = Symbol('tableFormRowInfoInjectionKey')
+
+/**
  *  表单ElDatePicker 组件 值是数组的type列表
  */
 export const DatePickerValueIsArrayList = ['datetimerange', 'daterange', 'monthrange']
