@@ -157,6 +157,7 @@
     <!-- 分页 -->
     <PlusPagination
       v-if="pagination"
+      ref="paginationInstance"
       v-model="subPageInfo"
       v-bind="pagination"
       @change="handlePaginationChange"
@@ -172,8 +173,24 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, toRefs, watch, ref, provide, shallowRef, useSlots, unref, computed } from 'vue'
-import type { PlusPaginationProps } from '@plus-pro-components/components/pagination'
+import {
+  nextTick,
+  reactive,
+  toRefs,
+  watch,
+  ref,
+  provide,
+  shallowRef,
+  useSlots,
+  unref,
+  computed,
+  onMounted,
+  onBeforeUnmount
+} from 'vue'
+import type {
+  PlusPaginationProps,
+  PlusPaginationInstance
+} from '@plus-pro-components/components/pagination'
 import { PlusPagination } from '@plus-pro-components/components/pagination'
 import {
   DefaultPageInfo,
@@ -196,9 +213,10 @@ import {
   getFieldSlotName,
   getExtraSlotName,
   filterSlots,
-  isSVGElement
+  isSVGElement,
+  isPlainObject
 } from '@plus-pro-components/components/utils'
-import { cloneDeep } from 'lodash-es'
+import { cloneDeep, debounce } from 'lodash-es'
 import PlusTableActionBar from './table-action-bar.vue'
 import PlusTableColumn from './table-column.vue'
 import PlusTableTableColumnIndex from './table-column-index.vue'
@@ -242,7 +260,8 @@ const props = withDefaults(defineProps<PlusTableProps>(), {
     width: 40
   }),
   expandTableColumnProps: () => ({}),
-  editable: false
+  editable: false,
+  adaptive: false
 })
 const emit = defineEmits<PlusTableEmits>()
 
@@ -251,6 +270,7 @@ const columnsIsChange: Ref<boolean> = ref(false)
 const filterColumns: Ref<PlusColumn[]> = ref([])
 const tableInstance = shallowRef<TableInstance | null>(null)
 const tableWrapperInstance = ref<HTMLDivElement | null>(null)
+const paginationInstance = ref<PlusPaginationInstance | null>(null)
 const state = reactive<PlusTableState>({
   subPageInfo: {
     ...(((props.pagination as PlusPaginationProps)?.modelValue || DefaultPageInfo) as PageInfo)
@@ -260,6 +280,8 @@ const state = reactive<PlusTableState>({
 const __tableData: ComputedRef<RecordType[]> = computed(() =>
   props.tableData?.length ? props.tableData : props.data
 )
+
+const hasAdaptive = computed(() => typeof props.height === 'undefined' && props.adaptive)
 
 const slots = useSlots()
 
@@ -426,6 +448,44 @@ const handleStopEditClick = (e: MouseEvent) => {
     }
   }
 }
+
+const setAdaptive = async () => {
+  if (!tableInstance.value) return
+  if (!paginationInstance.value) return
+  await nextTick()
+  const tableWrapper = tableInstance.value.$el
+  let offsetBottom = 20
+  let paginationHeight = 0
+
+  if (isPlainObject(props.adaptive)) {
+    offsetBottom = props.adaptive.offsetBottom ?? offsetBottom
+  }
+  if (props.pagination) {
+    paginationHeight = paginationInstance.value.$el.offsetHeight
+  }
+
+  tableWrapper.style.height = `${
+    window.innerHeight - tableWrapper.getBoundingClientRect().top - offsetBottom - paginationHeight
+  }px`
+}
+
+const debounceSetAdaptive = debounce(
+  setAdaptive,
+  isPlainObject(props.adaptive) ? props.adaptive.timeout ?? 60 : 60
+)
+
+onMounted(() => {
+  if (hasAdaptive.value) {
+    setAdaptive()
+    window.addEventListener('resize', debounceSetAdaptive)
+  }
+})
+
+onBeforeUnmount(() => {
+  if (hasAdaptive.value) {
+    window.removeEventListener('resize', debounceSetAdaptive)
+  }
+})
 
 const { subPageInfo, size } = toRefs(state)
 

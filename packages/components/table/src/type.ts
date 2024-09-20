@@ -405,6 +405,18 @@ export type PlusTableSelfProps = {
     | Partial<CSSProperties>
     | ((row: RecordType, index: number) => Partial<CSSProperties>)
   editable?: boolean | 'click' | 'dblclick'
+  /**
+   * @version 0.1.17
+   * @default false
+   */
+  adaptive?:
+    | boolean
+    | {
+        /** 表格距离页面底部的偏移量，默认值为 `80` */
+        offsetBottom?: number
+        /** 页面 `resize` 时的防抖时间，默认值为 `60` ms */
+        timeout?: number
+      }
 }
 
 export type PlusTableProps = PlusTableSelfProps & Partial<TableProps<any[]>> & RecordType
