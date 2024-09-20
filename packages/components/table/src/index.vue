@@ -450,9 +450,8 @@ const handleStopEditClick = (e: MouseEvent) => {
 }
 
 const setAdaptive = async () => {
-  if (!tableInstance.value) return
-  if (!paginationInstance.value) return
   await nextTick()
+  if (!tableInstance.value) return
   const tableWrapper = tableInstance.value.$el
   let offsetBottom = 20
   let paginationHeight = 0
@@ -460,7 +459,7 @@ const setAdaptive = async () => {
   if (isPlainObject(props.adaptive)) {
     offsetBottom = props.adaptive.offsetBottom ?? offsetBottom
   }
-  if (props.pagination) {
+  if (paginationInstance.value && props.pagination) {
     paginationHeight = paginationInstance.value.$el.offsetHeight
   }
 
