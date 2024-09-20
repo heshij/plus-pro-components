@@ -17,19 +17,20 @@ table/basic
 
 <el-tag>v0.1.17</el-tag>
 
-表格配置 `adaptive` 可实现自适应内容区高度，
-`adaptive` 的默认值是 `false`,
-`adaptive` 的类型是
+表格配置 `adaptive` 可实现自适应内容区高度，`adaptive` 的默认值是 `false`，`adaptive` 的类型是
 
 ```ts
-boolean |
-{
-/** 表格距离页面底部的偏移量，默认值为 `20` \*/
-offsetBottom?: number
-/** 页面 `resize` 时的防抖时间，默认值为 `60` ms \*/
-timeout?: number
+boolean | {
+  /** 表格距离页面底部的偏移量，默认值为 `20` */
+  offsetBottom?: number
+  /** 页面 `resize` 时的防抖时间，默认值为 `60` ms */
+  timeout?: number
 }
 ```
+
+::: warning 注意
+表格设置`height`属性后， `adaptive`属性将**不在生效**。
+:::
 
 :::demo
 table/height-adaptive
