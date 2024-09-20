@@ -412,7 +412,7 @@ export type PlusTableSelfProps = {
   adaptive?:
     | boolean
     | {
-        /** 表格距离页面底部的偏移量，默认值为 `80` */
+        /** 表格距离页面底部的偏移量，默认值为 `20` */
         offsetBottom?: number
         /** 页面 `resize` 时的防抖时间，默认值为 `60` ms */
         timeout?: number
