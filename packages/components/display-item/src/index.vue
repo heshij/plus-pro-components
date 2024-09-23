@@ -8,7 +8,7 @@
     :columns="columns"
     :has-footer="false"
     :has-label="false"
-    v-bind="column.formProps"
+    v-bind="column.formProps || formProps"
     class="plus-display-item__form"
     @change="handleChange"
   >
@@ -184,6 +184,7 @@
 <script lang="ts" setup>
 import { cloneDeep } from 'lodash-es'
 import { DocumentCopy, Select } from '@element-plus/icons-vue'
+import type { PlusFormProps } from '@plus-pro-components/components/form'
 import { PlusForm } from '@plus-pro-components/components/form'
 import {
   isFunction,
@@ -217,6 +218,11 @@ export interface PlusDisplayItemProps {
   index?: number
   editable?: boolean | 'click' | 'dblclick'
   rest?: RecordType
+  /**
+   * PlusFormProps 优先级低于column.formProps
+   * @version 0.1.17
+   */
+  formProps?: PlusFormProps
 }
 export interface PlusTableTableColumnEmits {
   (e: 'change', data: { value: FieldValueType; prop: string; row: RecordType }): void
@@ -231,7 +237,8 @@ const props = withDefaults(defineProps<PlusDisplayItemProps>(), {
   row: () => ({}),
   index: 0,
   editable: false,
-  rest: () => ({})
+  rest: () => ({}),
+  formProps: () => ({})
 })
 const emit = defineEmits<PlusTableTableColumnEmits>()
 

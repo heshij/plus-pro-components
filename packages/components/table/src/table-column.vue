@@ -131,7 +131,7 @@ const emit = defineEmits<PlusTableTableColumnEmits>()
  *  表单ref处理
  */
 const plusDisplayItemInstance = ref<PlusDisplayItemInstance[] | null>()
-const formRef = inject(TableFormRefInjectionKey) as Ref<Record<string | number, TableFormRefRow[]>>
+const formRefs = inject(TableFormRefInjectionKey) as Ref<Record<string | number, TableFormRefRow[]>>
 
 /**
  *  设置表单ref
@@ -149,7 +149,7 @@ const setFormRef = () => {
     data[item.index].push(item)
   })
 
-  formRef.value = data
+  formRefs.value = data
 }
 
 watch(
@@ -158,7 +158,8 @@ watch(
     setFormRef()
   },
   {
-    deep: true
+    deep: true,
+    flush: 'post'
   }
 )
 

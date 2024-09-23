@@ -1,14 +1,26 @@
 <template>
-  <el-descriptions :title="title" :column="column" class="plus-description" border v-bind="$attrs">
+  <el-descriptions
+    :title="title"
+    :column="column"
+    class="plus-description"
+    :class="{ 'no-border': !border }"
+    border
+    v-bind="$attrs"
+  >
     <slot>
-      <template v-for="item in subColumns" :key="item.prop">
+      <template v-for="(item, index) in subColumns" :key="item.prop">
         <el-descriptions-item
           :label="getLabel(item.label)"
-          :class-name="(item.descriptionsItemProps?.className || '') + ' plus-description__name'"
-          :label-class-name="
-            (item.descriptionsItemProps?.labelClassName || '') + ' plus-description__label'
+          :class-name="
+            (item.descriptionsItemProps?.className || '') +
+            ' plus-description__name  plus-description__content'
           "
-          v-bind="item.descriptionsItemProps"
+          :label-class-name="
+            (item.descriptionsItemProps?.labelClassName || '') +
+            ' plus-description__label' +
+            (getIsRequired(item) ? ' is-required' : '')
+          "
+          v-bind="item.descriptionsItemProps || descriptionsItemProps"
         >
           <template #label>
             <component
@@ -33,10 +45,22 @@
             <template v-else>{{ getLabel(item.label) }}</template>
           </template>
 
+          <!-- 第一优先级表单 -->
+          <template v-if="editable">
+            <PlusDisplayItem
+              ref="plusDisplayItemInstance"
+              :column="item"
+              :row="data"
+              editable
+              :form-props="formProps"
+              @change="data => handleChange(data, index, item)"
+            />
+          </template>
+
           <!-- renderDescriptionsItem -->
           <component
             :is="item.renderDescriptionsItem"
-            v-if="item.renderDescriptionsItem && isFunction(item.renderDescriptionsItem)"
+            v-else-if="item.renderDescriptionsItem && isFunction(item.renderDescriptionsItem)"
             :value="getDisplayValue(item.prop)"
             :column="item"
             :row="data"
@@ -72,10 +96,11 @@
 
 <script lang="ts" setup>
 import type { ExtractPropTypes } from 'vue'
-import { computed, unref } from 'vue'
+import { computed, unref, ref, shallowRef, watch } from 'vue'
 import type { descriptionProps } from 'element-plus'
 import { ElDescriptions, ElDescriptionsItem } from 'element-plus'
-import type { PlusColumn, RecordType, Mutable } from '@plus-pro-components/types'
+import type { PlusColumn, RecordType, Mutable, FieldValueType } from '@plus-pro-components/types'
+import type { TableFormRefRow } from '@plus-pro-components/components/table'
 import { PlusDisplayItem } from '@plus-pro-components/components/display-item'
 import {
   isFunction,
@@ -84,13 +109,43 @@ import {
   getValue,
   getLabel
 } from '@plus-pro-components/components/utils'
+import type { PlusDisplayItemInstance } from '@plus-pro-components/components/display-item'
+import type { PlusFormProps } from '@plus-pro-components/components/form'
 
 export type DescriptionProps = Partial<Mutable<ExtractPropTypes<typeof descriptionProps>>>
+
+type FormChangeCallBackParams = {
+  column: PlusColumn
+  index: number
+  prop: string
+  row: RecordType
+  value: FieldValueType
+}
 export interface PlusDescriptionsProps {
   data: RecordType
   columns?: PlusColumn[]
   column?: number
   title?: string
+  border?: boolean
+  /**
+   * 是否整体可编辑
+   * @version 0.1.17
+   * @default false
+   */
+  editable?: boolean
+  /**
+   * PlusFormProps 优先级低于column.formProps
+   * @version 0.1.17
+   */
+  formProps?: PlusFormProps
+  /**
+   * el-descriptions-item 的props 优先级低于column.descriptionsItemProps
+   * @version 0.1.17
+   */
+  descriptionsItemProps?: RecordType
+}
+export interface PlusDescriptionsEmits {
+  (e: 'formChange', data: FormChangeCallBackParams): void
 }
 export interface PlusTableTableColumnStatus {
   text: string
@@ -105,12 +160,98 @@ const props = withDefaults(defineProps<PlusDescriptionsProps>(), {
   data: () => ({}),
   columns: () => [],
   title: '',
-  column: 3
+  column: 3,
+  border: true,
+  editable: false,
+  formProps: undefined,
+  descriptionsItemProps: undefined
 })
+
+const emit = defineEmits<PlusDescriptionsEmits>()
+
+const plusDisplayItemInstance = ref<PlusDisplayItemInstance[] | null>()
+
+/**
+ * 表单的ref
+ */
+const formRefs = shallowRef<TableFormRefRow[]>([])
 
 const subColumns = computed(() =>
   props.columns.filter(item => unref(item.hideInDescriptions) !== true)
 )
 
 const getDisplayValue = (prop: string) => getValue(props.data, prop)
+
+/**
+ *  设置表单ref
+ */
+const setFormRef = () => {
+  if (!plusDisplayItemInstance.value?.length) return
+  const list =
+    plusDisplayItemInstance.value?.map(item => ({
+      ...item,
+      ...item?.getDisplayItemInstance()
+    })) || []
+
+  formRefs.value = list as unknown as TableFormRefRow[]
+}
+
+watch(
+  plusDisplayItemInstance,
+  () => {
+    setFormRef()
+  },
+  {
+    deep: true,
+    flush: 'post'
+  }
+)
+
+/**
+ * 判断是否是required
+ * @param item
+ */
+const getIsRequired = (item: PlusColumn) => {
+  const rules = Reflect.get(item.formProps?.rules || props.formProps?.rules || {}, item.prop) || {}
+  const isRequired = Object.values(rules).some(i => i.required)
+  return isRequired
+}
+
+/**
+ * 表单发生变化
+ * @param data
+ * @param index
+ * @param item
+ */
+const handleChange = (
+  data: { value: any; prop: string; row: RecordType },
+  index: number,
+  item: PlusColumn
+) => {
+  const formChangeCallBackParams = { ...data, index, column: { ...item } }
+  console.log(formChangeCallBackParams, 'formChangeCallBackParams')
+  emit('formChange', formChangeCallBackParams)
+}
+
+const validate = async () => {
+  try {
+    await Promise.all(
+      formRefs.value?.map((item: TableFormRefRow) => item.formInstance.value?.validate())
+    )
+  } catch (errors: any) {
+    return Promise.reject(errors)
+  }
+}
+
+const clearValidate = () => {
+  formRefs.value?.forEach((item: TableFormRefRow) => {
+    item.formInstance.value?.clearValidate()
+  })
+}
+
+defineExpose({
+  formRefs,
+  validate,
+  clearValidate
+})
 </script>

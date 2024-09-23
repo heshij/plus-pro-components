@@ -210,8 +210,9 @@ export type FormItemValueType =
 export interface FormColumnProps {
   /**
    * @desc 传递给 PlusForm的配置， 支持所有 el-form的props。值支持对象object。
+   * @version 0.1.17 修正
    */
-  formProps?: PropsItemType<PlusFormProps>
+  formProps?: PlusFormProps
   /**
    * @desc 传递给 el-form-item 的配置， 支持所有 el-form-item的props。值支持对象 object，computed，函数和 Promise。
    */
