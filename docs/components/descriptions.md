@@ -1,5 +1,7 @@
 # Descriptions 描述列表
 
+[描述列表 ](/components/descriptions.html) 是在 [PlusDisplayItem ](/components/display-item.html) 组件上上构建而来， 支持其属性、方法 、定义函数和插槽。
+
 ## 基础用法
 
 :::demo
@@ -66,19 +68,43 @@ descriptions/render-label
 
 :::
 
+## 可编辑描述列表
+
+<el-tag>v0.1.17</el-tag>
+
+::: warning 注意
+描述列表中表单数据不会主动和描述列表数据同步，需要结合 [formChange](/components/table.html#table-events) 事件手动同步。
+:::
+
+:::demo
+
+descriptions/form
+
+:::
+
 ## Descriptions API
 
 ## Descriptions Attributes
 
-| 名称      | 说明             | 类型                                           | 默认值 | 是否必须 |
-| --------- | ---------------- | ---------------------------------------------- | ------ | -------- |
-| `columns` | 描述列表配置信息 | `array`[PlusColumn[]](/components/config.html) | `[]`   | 是       |
-| `data`    | 描述列表数据     | `object`                                       | `{}`   | 是       |
-| ...       | ...              | ...                                            | ...    | ...      |
+| 名称                                            | 说明                                                                                                                     | 类型                                                                                                                    | 默认值  | 是否必须 |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- | ------- | -------- |
+| `columns`                                       | 描述列表配置信息                                                                                                         | `array`[PlusColumn[]](/components/config.html)                                                                          | `[]`    | 是       |
+| `data`                                          | 描述列表数据                                                                                                             | `object`                                                                                                                | `{}`    | 是       |
+| `border`<el-tag>v0.1.17</el-tag>                | 是否带有边框 ，区别于 el-descriptions 本身的 border 属性                                                                 | `boolean`                                                                                                               | `true`  | 否       |
+| `editable`<el-tag>v0.1.17</el-tag>              | 描述列表整体可编辑 ，优先级低于单个 [PlusColumn[editable]](/components/config.html) 的配置项                             | `boolean`                                                                                                               | `false` | 否       |
+| `formProps`<el-tag>v0.1.17</el-tag>             | 描述列表表单的 props，优先级低于单个 [PlusColumn[formProps]](/components/config.html) 的配置项                           | `object`[PlusFormProps](/components/form.html#form-attributes)                                                          |         | 否       |
+| `descriptionsItemProps`<el-tag>v0.1.17</el-tag> | el-descriptions-item 整体的 props ，优先级低于单个 [PlusColumn[descriptionsItemProps] ](/components/config.html)的配置项 | `object`[DescriptionsItemProps](https://element-plus.org/zh-CN/component/descriptions.html#descriptionsitem-attributes) |         | 否       |
+| ...                                             | ...                                                                                                                      | ...                                                                                                                     | ...     | ...      |
 
 :::tip 提示
-**`...`表示同时支持所有 [el-descriptions](https://element-plus.org/zh-CN/component/descriptions.html#descriptions-attributes) Attributes**
+**`...`表示同时支持所有 [el-descriptions](https://element-plus.org/zh-CN/component/descriptions.html#descriptions-attributes) Attributes ， border 属性除外。**
 :::
+
+## Descriptions Events
+
+| 名称                                 | 说明                                     | 类型                                                                                                                                                          |
+| ------------------------------------ | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `formChange`<el-tag>v0.1.17</el-tag> | 描述列表中有可以编辑的表单项目改变时触发 | `function` <docs-tip content='(data:FormChangeCallBackParams) => void'></docs-tip> [FormChangeCallBackParams](/components/type.html#formchangecallbackparams) |
 
 ## Descriptions Slots
 
@@ -91,3 +117,11 @@ descriptions/render-label
 :::tip 提示
 **`...`表示同时支持所有 [el-descriptions](https://element-plus.org/zh-CN/component/descriptions.html#descriptions-slots) Slots**
 :::
+
+## Exposes
+
+| 名称                                    | 说明                         | 类型                                                           |
+| --------------------------------------- | ---------------------------- | -------------------------------------------------------------- |
+| `validate`<el-tag>v0.1.17</el-tag>      | 表单校验                     | `function` <docs-tip content="() => Promise<void>"></docs-tip> |
+| `clearValidate`<el-tag>v0.1.17</el-tag> | 清除所有表单校验             | `function` <docs-tip content=" () => void"></docs-tip>         |
+| `formRefs`<el-tag>v0.1.17</el-tag>      | 描述列表中所有 form 的实例。 | `array` <docs-tip content='TableFormRefRow[]'></docs-tip>      |
