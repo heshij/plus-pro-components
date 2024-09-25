@@ -215,4 +215,122 @@ describe('descriptions/index.vue', () => {
     expect(wrapper.find('.plus-description').text()).toContain('自定义1')
     expect(wrapper.find('.plus-description').text()).toContain('自定义label状态')
   })
+
+  test('descriptions form and instance test', async () => {
+    const columns: PlusColumn[] = [
+      {
+        label: '名称',
+        width: 120,
+        prop: 'name',
+        valueType: 'copy'
+      },
+      {
+        label: '标签',
+        width: 120,
+        prop: 'tag',
+        valueType: 'tag'
+      },
+      {
+        label: '状态',
+        width: 120,
+        prop: 'status',
+        valueType: 'select',
+        options: [
+          {
+            label: '未解决',
+            value: '0',
+            color: 'red'
+          },
+          {
+            label: '已解决',
+            value: '1',
+            color: 'blue'
+          },
+          {
+            label: '解决中',
+            value: '2',
+            color: 'yellow'
+          },
+          {
+            label: '失败',
+            value: '3',
+            color: 'red'
+          }
+        ]
+      },
+      {
+        label: '执行进度',
+        width: 200,
+        prop: 'progress',
+        valueType: 'progress'
+      },
+      {
+        label: '代码块',
+        width: 250,
+        prop: 'code',
+        valueType: 'code'
+      },
+      {
+        label: '评分',
+        width: 200,
+        prop: 'rate',
+        valueType: 'rate'
+      },
+      {
+        label: '开关',
+        width: 100,
+        prop: 'switch',
+        valueType: 'switch'
+      },
+      {
+        label: '时间',
+        width: 190,
+        prop: 'time',
+        valueType: 'date-picker'
+      }
+    ]
+
+    const data = {
+      title: '序号',
+      name: '',
+      status: '1',
+      tag: '',
+      progress: 30,
+      rate: 3,
+      switch: false,
+      time: new Date(),
+      code: `
+    const getData = async params => {
+      const data = await getData(params)
+      return { list: data.data, ...data }
+    }`
+    }
+
+    const wrapper = mount(Descriptions, {
+      props: {
+        columns: columns,
+        editable: true,
+        data: data
+      },
+      global: {
+        plugins: [ElementPlus]
+      }
+    })
+    await nextTick()
+
+    // form dom
+    setTimeout(() => {
+      expect(wrapper.find('.plus-description .plus-form').exists()).toBe(true)
+      expect(wrapper.find('.plus-description .plus-form .el-input__inner').exists()).toBe(true)
+      expect(wrapper.find('.plus-description .plus-form .el-select__input').exists()).toBe(true)
+      expect(wrapper.find('.plus-description .plus-form .el-switch').exists()).toBe(true)
+      expect(wrapper.find('.plus-description .plus-form .el-rate').exists()).toBe(true)
+      expect(wrapper.find('.plus-description .plus-form .el-date-editor').exists()).toBe(true)
+    })
+
+    // instance
+    expect(wrapper.vm).toHaveProperty('formRefs')
+    expect(wrapper.vm).toHaveProperty('validate')
+    expect(wrapper.vm).toHaveProperty('clearValidate')
+  })
 })
