@@ -11,17 +11,15 @@
     v-bind="indexTableColumnProps"
   >
     <template #default="{ row, $index }">
-      <el-tooltip
-        v-if="getTableIndex($index) > max"
-        :content="String(getTableIndex($index))"
-        placement="top-start"
+      <div
+        v-if="isFunction(getTableIndex)"
+        class="plus-table-column-index__content"
+        :style="indexContentStyle(row, $index)"
       >
-        <div class="plus-table-column-index__content" :style="indexContentStyle(row, $index)">
-          {{ getTableIndex($index) }}
-        </div>
-      </el-tooltip>
-      <div v-else class="plus-table-column-index__content" :style="indexContentStyle(row, $index)">
         {{ getTableIndex($index) }}
+      </div>
+      <div v-else class="plus-table-column-index__content" :style="indexContentStyle(row, $index)">
+        {{ getTableIndex }}
       </div>
     </template>
   </el-table-column>
@@ -30,14 +28,15 @@
 <script lang="ts" setup>
 import { DefaultPageInfo } from '@plus-pro-components/constants'
 import type { PageInfo, RecordType } from '@plus-pro-components/types'
-import type { CSSProperties } from 'vue'
+import { computed, type CSSProperties } from 'vue'
 import { isFunction, isPlainObject } from '@plus-pro-components/components/utils'
-import { ElTableColumn, ElTooltip } from 'element-plus'
+import { ElTableColumn } from 'element-plus'
+import { isNumber } from 'lodash-es'
+import type { TableColumnCtx } from 'element-plus'
 
 export interface PlusTableTableColumnIndexProps {
   pageInfo?: PageInfo
-  indexTableColumnProps?: RecordType
-  max?: number
+  indexTableColumnProps?: Partial<TableColumnCtx<any>>
   indexContentStyle?:
     | Partial<CSSProperties>
     | ((row: RecordType, index: number) => Partial<CSSProperties>)
@@ -48,22 +47,24 @@ defineOptions({
 })
 
 const props = withDefaults(defineProps<PlusTableTableColumnIndexProps>(), {
-  show: false,
   pageInfo: () => ({ ...DefaultPageInfo }),
-  max: 999,
   indexContentStyle: () => ({}),
   indexTableColumnProps: () => ({})
 })
 
 // 修改序号生成方法
-const getTableIndex = (index: number) => {
-  const i =
-    ((props.pageInfo?.page || DefaultPageInfo.page) - 1) *
-      (props.pageInfo?.pageSize || DefaultPageInfo.page) +
-    index +
-    1
-  return +i
-}
+const getTableIndex = isNumber(props.indexTableColumnProps?.index)
+  ? computed(() => props.indexTableColumnProps?.index)
+  : isFunction(props.indexTableColumnProps?.index)
+  ? props.indexTableColumnProps?.index
+  : (index: number) => {
+      const i =
+        ((props.pageInfo?.page || DefaultPageInfo.page) - 1) *
+          (props.pageInfo?.pageSize || DefaultPageInfo.page) +
+        index +
+        1
+      return +i
+    }
 
 // index样式
 const indexContentStyle = (row: RecordType, index: number): CSSProperties => {

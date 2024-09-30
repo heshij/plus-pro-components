@@ -397,10 +397,10 @@ export type PlusTableSelfProps = {
   rowKey?: TableProps<any[]>['rowKey']
   /** sortablejs配置 */
   dragSortable?: false | Partial<SortableOptions>
-  dragSortableTableColumnProps?: RecordType
-  indexTableColumnProps?: RecordType
-  selectionTableColumnProps?: RecordType
-  expandTableColumnProps?: RecordType
+  dragSortableTableColumnProps?: Partial<TableColumnCtx<any>>
+  indexTableColumnProps?: Partial<TableColumnCtx<any>>
+  selectionTableColumnProps?: Partial<TableColumnCtx<any>>
+  expandTableColumnProps?: Partial<TableColumnCtx<any>>
   indexContentStyle?:
     | Partial<CSSProperties>
     | ((row: RecordType, index: number) => Partial<CSSProperties>)

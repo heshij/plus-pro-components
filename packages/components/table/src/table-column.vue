@@ -2,11 +2,11 @@
   <template v-for="(item, index) in columns" :key="getKey(item)">
     <el-table-column
       :class-name="'plus-table-column ' + (hasPropsEditIcon ? 'plus-table-column__edit' : '')"
+      :index="index"
       v-bind="item.tableColumnProps"
       :prop="item.prop"
       :width="item.width"
       :min-width="item.minWidth"
-      :index="index"
     >
       <template #header="scoped">
         <span class="plus-table-column__header">
