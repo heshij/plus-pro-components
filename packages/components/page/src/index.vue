@@ -138,7 +138,8 @@ import {
   getTableCellSlotName,
   getTableHeaderSlotName,
   getFieldSlotName,
-  filterSlots
+  filterSlots,
+  isPlainObject
 } from '@plus-pro-components/components/utils'
 import { DefaultPageInfo, DefaultPageSizeList } from '@plus-pro-components/constants'
 
@@ -343,6 +344,37 @@ const handleRefresh = () => {
   getList()
 }
 
+/**
+ * 设置搜索的值
+ * @version v0.1.17
+ */
+const setSearchFieldsValue = (val: RecordType) => {
+  if (isPlainObject(val)) {
+    Object.keys(val).forEach(key => {
+      Reflect.set(values.value, key, val[key])
+    })
+  }
+}
+
+/**
+ * 获取搜索的值
+ * @version v0.1.17
+ */
+const getSearchFieldsValue = (key?: keyof any) => {
+  if (key !== undefined && key !== null) {
+    return Reflect.get(values.value, key)
+  } else {
+    return { ...values.value }
+  }
+}
+/**
+ * 清空搜索的值
+ * @version v0.1.17
+ */
+const clearSearchFieldsValue = () => {
+  values.value = {}
+}
+
 defineExpose({
   plusSearchInstance,
   plusTableInstance,
@@ -351,6 +383,9 @@ defineExpose({
   /**
    * TODO: 将会在v0.2.0中移除
    */
-  handleRest: handleReset
+  handleRest: handleReset,
+  setSearchFieldsValue,
+  getSearchFieldsValue,
+  clearSearchFieldsValue
 })
 </script>
