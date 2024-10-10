@@ -77,7 +77,10 @@ export type ElementPlusFormProps = {
  * 分组表单配置项
  */
 export interface PlusFormGroupRow {
-  title: string
+  /**
+   * @version v0.1.17  新增 ComputedRef<string> 类型
+   */
+  title: string | ComputedRef<string>
   icon?: Component
   /**
    * @desc 分组表单el-card的props，优先级高于整体的cardProps

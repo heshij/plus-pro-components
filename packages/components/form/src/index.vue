@@ -17,14 +17,14 @@
       <template v-if="subGroup">
         <el-card
           v-for="groupItem in subGroup"
-          :key="groupItem.title"
+          :key="unref(groupItem.title)"
           v-bind="groupItem.cardProps || cardProps"
           class="plus-form__group__item"
         >
           <template #header>
             <slot
               name="group-header"
-              :title="groupItem.title"
+              :title="unref(groupItem.title)"
               :columns="groupItem.columns"
               :icon="groupItem.icon"
             >
@@ -32,7 +32,7 @@
                 <el-icon v-if="groupItem.icon">
                   <component :is="groupItem.icon" />
                 </el-icon>
-                {{ groupItem.title }}
+                {{ unref(groupItem.title) }}
               </div>
             </slot>
           </template>
