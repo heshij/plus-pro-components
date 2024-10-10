@@ -10,6 +10,18 @@ page/basic
 
 :::
 
+## 手动控制搜索值
+
+<el-tag>v0.1.17</el-tag>
+
+可使用实例中提供的方法`setSearchFieldsValue` `getSearchFieldsValue` `clearSearchFieldsValue`手动控制搜索值。
+
+:::demo
+
+page/setValue
+
+:::
+
 ## 搜索参数处理
 
 配置`before-search-submit`方法，可在请求前替换参数名。
@@ -138,10 +150,13 @@ page/crud
 
 ## Page Exposes
 
-| 名称                                                                                          | 说明                                                  | 类型                                                                                         |
-| --------------------------------------------------------------------------------------------- | ----------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `plusSearchInstance`                                                                          | [PlusSearch](/components/table.html)的实例            | `object` <docs-tip content="import('plus-pro-components')['PlusSearchInstance']"></docs-tip> |
-| `plusTableInstance`                                                                           | [PlusTable](/components/table.html)的实例             | `object`<docs-tip content="import('plus-pro-components')['PlusTableInstance']"></docs-tip>   |
-| `getList`                                                                                     | 获取数据方法，可以用来重新加载数据                    | `function` <docs-tip content='() => void'></docs-tip>                                        |
-| <el-text tag="del"> `handleRest` </el-text> <el-tag type="danger">deprecated v0.1.14</el-tag> | 重置搜索数据，并将 page 置为 1 ，然后重新加载 getList | `function` <docs-tip content='() => void'></docs-tip>                                        |
-| `handleReset`<el-tag>v0.1.14</el-tag>                                                         | 重置搜索数据，并将 page 置为 1 ，然后重新加载 getList | `function` <docs-tip content='() => void'></docs-tip>                                        |
+| 名称                                                                                          | 说明                                                                              | 类型                                                                                         |
+| --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `plusSearchInstance`                                                                          | [PlusSearch](/components/table.html)的实例                                        | `object` <docs-tip content="import('plus-pro-components')['PlusSearchInstance']"></docs-tip> |
+| `plusTableInstance`                                                                           | [PlusTable](/components/table.html)的实例                                         | `object`<docs-tip content="import('plus-pro-components')['PlusTableInstance']"></docs-tip>   |
+| `getList`                                                                                     | 获取数据方法，可以用来重新加载数据                                                | `function` <docs-tip content='() => void'></docs-tip>                                        |
+| <el-text tag="del"> `handleRest` </el-text> <el-tag type="danger">deprecated v0.1.14</el-tag> | 重置搜索数据，并将 page 置为 1 ，然后重新加载 getList                             | `function` <docs-tip content='() => void'></docs-tip>                                        |
+| `handleReset`<el-tag>v0.1.14</el-tag>                                                         | 重置搜索数据，并将 page 置为 1 ，然后重新加载 getList                             | `function` <docs-tip content='() => void'></docs-tip>                                        |
+| `setSearchFieldsValue`<el-tag>v0.1.17</el-tag>                                                | 手动设置搜索值 ，传入一个对象参数，只会修改对象参数中对应值。                     | `function` <docs-tip content=' (val: RecordType) => void'></docs-tip>                        |
+| `getSearchFieldsValue`<el-tag>v0.1.17</el-tag>                                                | 手动获取搜索值 ，传入一个字段`key`则获取的得是字段`key`对应的值，默认返回所有值。 | `function` <docs-tip content='(key?: keyof any) => FieldValueType\| FieldValues'></docs-tip> |
+| `clearSearchFieldsValue`<el-tag>v0.1.17</el-tag>                                              | 手动清空搜索值                                                                    | `function` <docs-tip content='() => void'></docs-tip>                                        |
