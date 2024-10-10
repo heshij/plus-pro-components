@@ -7,7 +7,7 @@ import { useTable } from '@plus-pro-components/hooks'
 import PlusPage from '../src/index.vue'
 
 describe('page/index.vue', () => {
-  test('render test', async () => {
+  test('render  and instance  test', async () => {
     const getList = async (
       query: PageInfo & {
         status?: string
@@ -159,7 +159,13 @@ describe('page/index.vue', () => {
       }
     ]
 
-    const wrapper = mount(() => <PlusPage columns={tableConfig} request={getList} />, {
+    const wrapper = mount(PlusPage, {
+      props: {
+        columns: tableConfig,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        request: getList
+      },
       global: {
         plugins: [ElementPlus]
       }
@@ -170,6 +176,8 @@ describe('page/index.vue', () => {
     expect(wrapper.find('.plus-pagination').exists()).toBe(true)
 
     const wrapper1 = mount(
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       () => <PlusPage search={false} columns={tableConfig} request={getList} />,
       {
         global: {
@@ -180,6 +188,15 @@ describe('page/index.vue', () => {
     await nextTick()
     expect(wrapper1.find('.plus-search').exists()).toBe(false)
     expect(wrapper1.find('.plus-table').exists()).toBe(true)
+
+    // instance
+    expect(wrapper.vm).toHaveProperty('plusSearchInstance')
+    expect(wrapper.vm).toHaveProperty('plusTableInstance')
+    expect(wrapper.vm).toHaveProperty('getList')
+    expect(wrapper.vm).toHaveProperty('handleReset')
+    expect(wrapper.vm).toHaveProperty('setSearchFieldsValue')
+    expect(wrapper.vm).toHaveProperty('getSearchFieldsValue')
+    expect(wrapper.vm).toHaveProperty('clearSearchFieldsValue')
   })
   test('slots test', async () => {
     const getList = async (
@@ -348,6 +365,8 @@ describe('page/index.vue', () => {
       () => (
         <PlusPage
           columns={columns}
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           request={getList}
           table={{
             pagination: { total: 3, modelValue: pageInfo.value },
@@ -373,6 +392,8 @@ describe('page/index.vue', () => {
       }
     )
     await nextTick()
+
+    // slots
     expect(wrapper.find('.plus-pagination').text()).includes('pagination-left')
     expect(wrapper.find('.plus-table').text()).includes('column-settings-icon')
     expect(wrapper.find('.plus-table').text()).includes('density-icon')
