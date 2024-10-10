@@ -16,7 +16,7 @@
       <!-- 分组表单 -->
       <template v-if="subGroup">
         <el-card
-          v-for="groupItem in subGroup"
+          v-for="(groupItem, index) in subGroup"
           :key="unref(groupItem.title)"
           v-bind="groupItem.cardProps || cardProps"
           class="plus-form__group__item"
@@ -27,6 +27,7 @@
               :title="unref(groupItem.title)"
               :columns="groupItem.columns"
               :icon="groupItem.icon"
+              :index="index"
             >
               <div class="plus-form__group__item__icon">
                 <el-icon v-if="groupItem.icon">
