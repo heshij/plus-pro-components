@@ -10,7 +10,7 @@
     <template #default="{ row, $index, ...rest }">
       <!-- 显示出来的按钮 -->
       <template v-for="buttonRow in getSubButtons(row, $index).preButtons" :key="buttonRow.text">
-        <component :is="() => render(row, buttonRow, $index, rest)" />
+        <component :is="render(row, buttonRow, $index, rest)" />
       </template>
 
       <!-- 隐藏的按钮 -->
@@ -18,6 +18,7 @@
         v-if="getSubButtons(row, $index).showMore"
         trigger="click"
         class="plus-table-action-bar__dropdown"
+        :hide-on-click="hideOnClick"
       >
         <span class="plus-table-action-bar__dropdown__link">
           <span class="plus-table-action-bar__more-text"> {{ t('plus.table.more') }}</span>
@@ -33,7 +34,7 @@
               v-for="buttonRow in getSubButtons(row, $index).nextButtons"
               :key="(unref(buttonRow.text) as string)"
             >
-              <component :is="() => render(row, buttonRow, $index, rest)" />
+              <component :is="render(row, buttonRow, $index, rest)" />
             </el-dropdown-item>
           </el-dropdown-menu>
         </template>
@@ -44,7 +45,7 @@
 
 <script lang="ts" setup>
 import type { VNode, AppContext, Ref, ComputedRef, Component } from 'vue'
-import { h, unref, withDirectives, inject } from 'vue'
+import { h, unref, withDirectives, inject, ref } from 'vue'
 import { ArrowDownBold } from '@element-plus/icons-vue'
 import type { TableColumnCtx, ElMessageBoxOptions } from 'element-plus'
 import {
@@ -56,7 +57,8 @@ import {
   ElTableColumn,
   ElDropdown,
   ElDropdownItem,
-  ElDropdownMenu
+  ElDropdownMenu,
+  ElPopconfirm
 } from 'element-plus'
 import type { RecordType } from '@plus-pro-components/types'
 import { isFunction, isPlainObject } from '@plus-pro-components/components/utils'
@@ -94,10 +96,23 @@ export interface ActionBarProps {
    * 表格操作栏 el-table-column 的其他props   默认值为 `{}`
    */
   actionBarTableColumnProps?: Partial<TableColumnCtx<RecordType>>
+  /**
+   * 表格操作栏 需要二次确认的类型，默认是 messageBox
+   * @version v0.1.17
+   */
+  confirmType?: 'messageBox' | 'popconfirm'
 }
 export interface PlusTableActionBarEmits {
   (e: 'clickAction', data: ButtonsCallBackParams): void
   (e: 'clickActionConfirmCancel', data: ButtonsCallBackParams): void
+}
+
+type Params = {
+  text: string
+  row: RecordType
+  buttonRow: ActionBarButtonsRow
+  index: number
+  rest: RecordType
 }
 
 defineOptions({
@@ -111,11 +126,15 @@ const props = withDefaults(defineProps<ActionBarProps>(), {
   buttons: () => [],
   width: 200,
   showNumber: 3,
-  actionBarTableColumnProps: () => ({})
+  actionBarTableColumnProps: () => ({}),
+  confirmType: 'messageBox'
 })
 const emit = defineEmits<PlusTableActionBarEmits>()
 
 const { t } = useLocale()
+
+// 控制下拉不隐藏，防止气泡定位异常
+const hideOnClick = ref(true)
 
 const formRefs = inject(TableFormRefInjectionKey) as Ref<Record<string | number, TableFormRefRow[]>>
 
@@ -145,6 +164,57 @@ const getSubButtons = (row: RecordType, index: number) => {
   }
 }
 
+/**
+ * 获取确认按钮参数
+ * @param buttonRow
+ * @param callbackParams
+ */
+const getConfirmParams = (params: Params, e?: MouseEvent) => {
+  const { row, buttonRow, index, rest, text } = params
+  const callbackParams = {
+    /**
+     * 解析后的按钮数据中的text
+     * @version v0.1.17
+     */
+    text,
+    row,
+    buttonRow,
+    index,
+    rowIndex: index,
+    e,
+    formRefs: formRefs.value[index],
+    ...rest
+  } as ButtonsCallBackParams
+
+  let message = t('plus.table.confirmToPerformThisOperation')
+  let title = t('plus.table.prompt')
+  let options: ElMessageBoxOptions | undefined = undefined
+  let appContext: AppContext | undefined | null = null
+
+  if (isPlainObject(buttonRow.confirm)) {
+    const tempTitle = isFunction(buttonRow.confirm.title)
+      ? buttonRow.confirm.title(callbackParams)
+      : (buttonRow.confirm.title as string)
+
+    if (tempTitle) {
+      title = tempTitle
+    }
+
+    const tempMessage = isFunction(buttonRow.confirm.message)
+      ? buttonRow.confirm.message(callbackParams)
+      : (buttonRow.confirm.message as string)
+
+    if (tempMessage) {
+      message = tempMessage
+    }
+
+    options = buttonRow.confirm?.options
+    appContext = buttonRow.confirm?.appContext
+  }
+
+  return { msg: { message, title, options, appContext }, callbackParams }
+}
+
 // 渲染
 const render = (
   row: RecordType,
@@ -159,133 +229,194 @@ const render = (
     ? buttonRow.props(row, index, buttonRow)
     : unref(buttonRow.props)
 
-  if (props.type === 'icon') {
-    return h(
-      ElTooltip,
-      { placement: 'top', content: unref(buttonRow.text) as string, ...buttonRow.tooltipProps },
-      () =>
-        withDirectives(
-          h(
-            ElIcon,
-            {
-              size: 16,
-              ...buttonRowProps,
-              onClick: (event: MouseEvent) => handleClickAction(row, buttonRow, index, event, rest)
-            },
-            () => (buttonRow.icon ? h(buttonRow.icon) : '')
-          ),
-          buttonRow.directives || []
-        )
-    )
-  } else {
-    const Tag = props.type === 'button' ? ElButton : ElLink
+  const text = isFunction(buttonRow.text)
+    ? unref(buttonRow.text(row, index, buttonRow))
+    : unref(buttonRow.text)
 
-    // FIXME: fix SSR click it auto scrollTo page top
-    const defaultProps = props.type === 'link' ? { href: 'javaScript:;' } : {}
-    return withDirectives(
-      h(
-        Tag as Component,
-        {
-          size: 'small',
-          ...defaultProps,
-          ...buttonRowProps,
-          onClick: (event: MouseEvent) => handleClickAction(row, buttonRow, index, event, rest)
-        },
-        () => {
-          if (isFunction(buttonRow.text)) {
-            const tempFunction = buttonRow.text as (
-              row: RecordType,
-              index: number,
-              button: ActionBarButtonsRow
-            ) => string | Ref<string> | ComputedRef<string>
-            const text = tempFunction(row, index, buttonRow)
-            return unref(text)
-          } else {
-            return unref(buttonRow.text)
-          }
-        }
-      ),
-      buttonRow.directives || []
-    )
-  }
-}
-
-// 分发按钮事件
-const handleClickAction = (
-  row: RecordType,
-  buttonRow: ActionBarButtonsRow,
-  index: number,
-  e: MouseEvent,
-  rest: RecordType
-) => {
-  const callbackParams = {
+  const params: Params = {
+    text,
     row,
     buttonRow,
     index,
-    rowIndex: index,
-    e,
-    formRefs: formRefs.value[index],
-    ...rest
-  } as ButtonsCallBackParams
+    rest
+  }
+
+  const { msg, callbackParams } = getConfirmParams(params)
+
+  if (props.type === 'icon') {
+    return h(
+      ElTooltip,
+      { placement: 'top', content: text as string, ...buttonRow.tooltipProps },
+      () =>
+        props.confirmType === 'popconfirm' && buttonRow.confirm
+          ? h(
+              'span',
+              {
+                class: 'el-icon'
+              },
+              h(
+                ElPopconfirm,
+                {
+                  trigger: 'click',
+                  ...(isPlainObject(buttonRow.confirm) ? buttonRow.confirm?.popconfirmProps : {}),
+                  title: msg.message,
+                  onConfirm: (event: MouseEvent) => handleConfirm({ ...callbackParams, e: event }),
+                  onCancel: (event: MouseEvent) => handleCancel({ ...callbackParams, e: event })
+                },
+                {
+                  reference: () =>
+                    withDirectives(
+                      h(
+                        ElIcon,
+                        {
+                          size: 16,
+                          style: { margin: 0 },
+                          ...buttonRowProps,
+                          onClick: () => {
+                            // 控制下拉不隐藏，防止气泡定位异常
+                            hideOnClick.value = false
+
+                            if (isFunction(buttonRow.onClick)) {
+                              buttonRow.onClick(callbackParams)
+                            }
+                          }
+                        },
+                        () => (buttonRow.icon ? h(buttonRow.icon) : '')
+                      ),
+                      buttonRow.directives || []
+                    )
+                }
+              )
+            )
+          : withDirectives(
+              h(
+                ElIcon,
+                {
+                  size: 16,
+                  ...buttonRowProps,
+                  onClick: (event: MouseEvent) =>
+                    handleClickAction({ ...callbackParams, e: event }, msg)
+                },
+                () => (buttonRow.icon ? h(buttonRow.icon) : '')
+              ),
+              buttonRow.directives || []
+            )
+    )
+  } else {
+    const Tag: Component = props.type === 'button' ? ElButton : ElLink
+
+    // FIXME: fix SSR click it auto scrollTo page top
+    const defaultProps = props.type === 'link' ? { href: 'javaScript:;' } : {}
+
+    return props.confirmType === 'popconfirm' && buttonRow.confirm
+      ? h(
+          ElPopconfirm,
+          {
+            trigger: 'click',
+            ...(isPlainObject(buttonRow.confirm) ? buttonRow.confirm?.popconfirmProps : {}),
+            title: msg.message,
+            onConfirm: (event: MouseEvent) => handleConfirm({ ...callbackParams, e: event }),
+            onCancel: (event: MouseEvent) => handleCancel({ ...callbackParams, e: event })
+          },
+          {
+            reference: () =>
+              withDirectives(
+                h(
+                  Tag,
+                  {
+                    size: 'small',
+                    ...defaultProps,
+                    ...buttonRowProps,
+                    onClick: () => {
+                      // 控制下拉不隐藏，防止气泡定位异常
+                      hideOnClick.value = false
+
+                      if (isFunction(buttonRow.onClick)) {
+                        buttonRow.onClick(callbackParams)
+                      }
+                    }
+                  },
+                  () => text
+                ),
+                buttonRow.directives || []
+              )
+          }
+        )
+      : withDirectives(
+          h(
+            Tag,
+            {
+              size: 'small',
+              ...defaultProps,
+              ...buttonRowProps,
+              onClick: (event: MouseEvent) =>
+                handleClickAction({ ...callbackParams, e: event }, msg)
+            },
+            () => text
+          ),
+          buttonRow.directives || []
+        )
+  }
+}
+
+// 气泡确认
+const handleConfirm = (callbackParams: ButtonsCallBackParams) => {
+  if (isFunction(callbackParams.buttonRow.onConfirm)) {
+    callbackParams.buttonRow.onConfirm(callbackParams)
+  }
+  emit('clickAction', callbackParams)
+}
+
+// 气泡取消
+const handleCancel = (callbackParams: ButtonsCallBackParams) => {
+  if (isFunction(callbackParams.buttonRow.onCancel)) {
+    callbackParams.buttonRow.onCancel(callbackParams)
+  }
+  emit('clickActionConfirmCancel', callbackParams)
+}
+
+// 分发按钮事件
+const handleClickAction = (callbackParams: ButtonsCallBackParams, msg: RecordType) => {
+  hideOnClick.value = true
+  const { buttonRow } = callbackParams
 
   /**
    * add self onClick event support
    * @version v0.1.8
    */
-  if (buttonRow.onClick && isFunction(buttonRow.onClick)) {
+  if (isFunction(buttonRow.onClick)) {
     buttonRow.onClick(callbackParams)
   }
 
   if (buttonRow.confirm) {
-    let message = t('plus.table.confirmToPerformThisOperation')
-    let title = t('plus.table.prompt')
-    let options: ElMessageBoxOptions | undefined = undefined
-    let appContext: AppContext | undefined | null = null
+    // 二次确认类型是 messageBox
+    if (props.confirmType === 'messageBox') {
+      const { message, title, options, appContext } = msg
 
-    if (isPlainObject(buttonRow.confirm) && typeof buttonRow.confirm !== 'boolean') {
-      const tempTitle = isFunction(buttonRow.confirm.title)
-        ? (buttonRow.confirm.title as (data: ButtonsCallBackParams) => string)(callbackParams)
-        : (buttonRow.confirm.title as string)
+      ElMessageBox.confirm(message, title, options, appContext)
+        .then(() => {
+          /**
+           * add self onConfirm event support
+           * @version v0.1.8
+           */
+          if (isFunction(buttonRow.onConfirm)) {
+            buttonRow.onConfirm(callbackParams)
+          }
 
-      if (tempTitle) {
-        title = tempTitle
-      }
+          emit('clickAction', callbackParams)
+        })
+        .catch(() => {
+          /**
+           * add self onCancel event support
+           * @version v0.1.8
+           */
+          if (isFunction(buttonRow.onCancel)) {
+            buttonRow.onCancel(callbackParams)
+          }
 
-      const tempMessage = isFunction(buttonRow.confirm.message)
-        ? (buttonRow.confirm.message as (data: ButtonsCallBackParams) => string)(callbackParams)
-        : (buttonRow.confirm.message as string)
-
-      if (tempMessage) {
-        message = tempMessage
-      }
-
-      options = buttonRow.confirm?.options
-      appContext = buttonRow.confirm?.appContext
+          emit('clickActionConfirmCancel', callbackParams)
+        })
     }
-
-    ElMessageBox.confirm(message, title, options, appContext)
-      .then(() => {
-        /**
-         * add self onConfirm event support
-         * @version v0.1.8
-         */
-        if (buttonRow.onConfirm && isFunction(buttonRow.onConfirm)) {
-          buttonRow.onConfirm(callbackParams)
-        }
-
-        emit('clickAction', callbackParams)
-      })
-      .catch(() => {
-        /**
-         * add self onCancel event support
-         * @version v0.1.8
-         */
-        if (buttonRow.onCancel && isFunction(buttonRow.onCancel)) {
-          buttonRow.onCancel(callbackParams)
-        }
-
-        emit('clickActionConfirmCancel', callbackParams)
-      })
   } else {
     emit('clickAction', callbackParams)
   }

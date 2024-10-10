@@ -7,6 +7,7 @@ import '@external/message-box/style/index'
 import '@external/dropdown/style/index'
 import '@external/dropdown-menu/style/index'
 import '@external/dropdown-item/style/index'
+import '@external/popconfirm/style/index'
 
 import '@plus-pro-components/components/display-item/style/index'
 import '@plus-pro-components/components/popover/style/index'

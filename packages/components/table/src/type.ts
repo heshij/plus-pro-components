@@ -7,7 +7,8 @@ import type {
   IconProps,
   ElTooltipProps,
   TableColumnCtx,
-  TableProps
+  TableProps,
+  PopconfirmProps
 } from 'element-plus'
 import type {
   Component,
@@ -90,11 +91,13 @@ export interface ActionBarButtonsRow {
     | boolean
     | {
         /**
-         * 默认 `提示`
+         * ElMessageBox.confirm 的title  默认 `提示`
          */
         title?: string | ((data: ButtonsCallBackParams) => string)
         /**
-         * 默认 `确定执行本次操作`
+         * ElMessageBox.confirm  的message  默认 `确定执行本次操作`
+         *
+         * @version v0.1.17  message 会作为 ElPopconfirm 的title   当ActionBarProps.confirmType为 `popconfirm` 时生效
          */
         message?: string | ((data: ButtonsCallBackParams) => string)
 
@@ -102,6 +105,14 @@ export interface ActionBarButtonsRow {
          *  ElMessageBox.confirm 的options
          */
         options?: ElMessageBoxOptions
+
+        /**
+         * ElPopconfirm的PopconfirmProps
+         *          *
+         * 当ActionBarProps.confirmType为 `popconfirm` 时生效
+         *  @version v0.1.17
+         */
+        popconfirmProps?: Partial<Mutable<PopconfirmProps>>
         /**
          *  ElMessageBox.confirm 的appContext
          */
@@ -247,6 +258,12 @@ export interface ButtonsCallBackParams extends TableCellParams {
    * 点击按钮数据
    */
   buttonRow: ActionBarButtonsRow
+
+  /**
+   * 解析后的按钮数据中的text
+   * @version v0.1.17
+   */
+  text: string
 
   /**
    * 按钮点击事件数据
