@@ -179,7 +179,7 @@ export interface ActionBarButtonsRow {
         /**
          * ElMessageBox.confirm  的message  默认 `确定执行本次操作`
          *
-         * @version v0.1.17  message 会作为 ElPopconfirm 的title   当ActionBarProps.confirmType为 `popconfirm` 时生效
+         * @version v0.1.17 新增   当ActionBarProps.confirmType为 `popconfirm` 时 ， 版本中 message 会作为 ElPopconfirm 的title
          */
         message?: string | ((data: ButtonsCallBackParams) => string)
 
@@ -192,7 +192,7 @@ export interface ActionBarButtonsRow {
          * ElPopconfirm的props
          *
          * 当ActionBarProps.confirmType为 `popconfirm` 时生效
-         *  @version v0.1.17
+         * @version v0.1.17
          * @see https://element-plus.org/zh-CN/component/popconfirm.html#attributes
          */
         popconfirmProps?: Partial<Mutable<PopconfirmProps>>
@@ -277,6 +277,12 @@ export interface ActionBarProps {
    * 表格操作栏 el-table-column 的其他props   默认值为 `{}`
    */
   actionBarTableColumnProps?: Partial<import('element-plus')['TableColumnCtx']>
+
+  /**
+   * 表格操作栏 需要二次确认的类型，默认是 messageBox
+   * @version v0.1.17
+   */
+  confirmType?: 'messageBox' | 'popconfirm'
 }
 ```
 
