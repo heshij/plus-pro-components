@@ -1,3 +1,26 @@
+## [v0.1.17](https://github.com/plus-pro-components/plus-pro-components/compare/v0.1.16...v0.1.17) (2024-10-11)
+
+### ✨ Features
+
+- **components:** :sparkles: table action-bar add popconfirm support([cb7ff3f](https://github.com/plus-pro-components/plus-pro-components/commit/cb7ff3f)) by@xiaofei
+- **components:** :sparkles: page add setSearchFieldsValue([0f6c626](https://github.com/plus-pro-components/plus-pro-components/commit/0f6c626)) by@xiaofei
+- **components:** :sparkles: group-header slot add index params([195bc4c](https://github.com/plus-pro-components/plus-pro-components/commit/195bc4c)) by@xiaofei
+- **components:** :sparkles: plusFormGroupRow['title'] add ComputedRef<string> type support([618a67a](https://github.com/plus-pro-components/plus-pro-components/commit/618a67a)) by@xiaofei
+- **all:** Merge pull request [#215](https://github.com/plus-pro-components/plus-pro-components/pull/215) from gltjk/patch-2([2fe20cf](https://github.com/plus-pro-components/plus-pro-components/commit/2fe20cf)) by@xiaofei
+- **components:** :sparkles: plusDescriptions add form function support([643ce45](https://github.com/plus-pro-components/plus-pro-components/commit/643ce45)) by@xiaofei
+- **all:** Merge pull request [#211](https://github.com/plus-pro-components/plus-pro-components/pull/211) from gltjk/patch-1([74b9db5](https://github.com/plus-pro-components/plus-pro-components/commit/74b9db5)) by@xiaofei
+- **all:** Merge pull request [#209](https://github.com/plus-pro-components/plus-pro-components/pull/209) from plus-pro-components/gs([b8fbc53](https://github.com/plus-pro-components/plus-pro-components/commit/b8fbc53)) by@xiaofei
+- **components:** :sparkles: redefine adaptive types([cdd11ef](https://github.com/plus-pro-components/plus-pro-components/commit/cdd11ef)) by@guosong
+- **components:** :sparkles: table add height adaptive([952064b](https://github.com/plus-pro-components/plus-pro-components/commit/952064b)) by@guosong
+- **components:** :sparkles: table add height adaptive([893745b](https://github.com/plus-pro-components/plus-pro-components/commit/893745b)) by@guosong
+- **components:** :sparkles: renderField and renderLabel add table row info([89486cb](https://github.com/plus-pro-components/plus-pro-components/commit/89486cb)) by@xiaofei
+
+### 🐛 Bug Fixes
+
+- **docs:** :bug: update type.md([e154c7c](https://github.com/plus-pro-components/plus-pro-components/commit/e154c7c)) by@xiaofei
+- **components:** :bug: fix table index column cannot customize([5aefb2e](https://github.com/plus-pro-components/plus-pro-components/commit/5aefb2e)) by@xiaofei
+- **components:** :bug: fix sidebar component icon show error([7eb5d89](https://github.com/plus-pro-components/plus-pro-components/commit/7eb5d89)) by@xiaofei
+
 ## [v0.1.16](https://github.com/plus-pro-components/plus-pro-components/compare/v0.1.15...v0.1.16) (2024-09-06)
 
 ### ✨ Features
