@@ -64,6 +64,7 @@ export interface ActionBarButtonsRow {
     | ButtonRowProps
     | ((row: any, index: number, button: ActionBarButtonsRow) => ButtonRowProps)
     | ComputedRef<ButtonRowProps>
+
   /**
    * ElTooltip组件的props， type 为icon 时生效
    */
@@ -107,10 +108,11 @@ export interface ActionBarButtonsRow {
         options?: ElMessageBoxOptions
 
         /**
-         * ElPopconfirm的PopconfirmProps
-         *          *
+         * ElPopconfirm的props
+         *
          * 当ActionBarProps.confirmType为 `popconfirm` 时生效
          *  @version v0.1.17
+         * @see https://element-plus.org/zh-CN/component/popconfirm.html#attributes
          */
         popconfirmProps?: Partial<Mutable<PopconfirmProps>>
         /**
