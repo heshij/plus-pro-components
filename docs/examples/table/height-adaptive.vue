@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="adaptive-table-wrapper">
     <PlusTable
       ref="plusTableInstance"
       :columns="tableConfig"
@@ -156,3 +156,11 @@ const getList = async () => {
 }
 getList()
 </script>
+
+<style scoped>
+.adaptive-table-wrapper {
+  :deep(.el-table--default) {
+    max-height: 640px;
+  }
+}
+</style>

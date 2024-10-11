@@ -75,11 +75,11 @@ table/cell-style
 
 ## 操作栏
 
-默认不显示。配置`actionBar`即可。 `actionBar` 中的`type` 支持 `button`，`icon`和 `link`，对应`element plus` 的 [ElButton](https://element-plus.org/zh-CN/component/button.html)，[ElIcon](https://element-plus.org/zh-CN/component/icon.html) 和 [ElLink ](https://element-plus.org/zh-CN/component/link.html)组件。
+默认不显示。配置[actionBar](/components/type.html#actionbarbuttonsrow) 即可。 `actionBar` 中的`type` 支持 `button`，`icon`和 `link`，对应`element plus` 的 [ElButton](https://element-plus.org/zh-CN/component/button.html)，[ElIcon](https://element-plus.org/zh-CN/component/icon.html) 和 [ElLink ](https://element-plus.org/zh-CN/component/link.html)组件。
 
 配置 `confirm` 即可实现二次确认。配置 `show` 即可实现权限和动态显示。
 
-操作栏配置详情参考 [ActionBarButtonsRow](/components/type.html#actionbarbuttonsrow)
+操作栏`actionBar` 配置详情参考 [ActionBarButtonsRow](/components/type.html#actionbarbuttonsrow)
 
 :::demo
 
@@ -118,6 +118,20 @@ table/action-bar-event
 :::demo
 
 table/action-bar-directives
+
+:::
+
+## 操作栏二次确认类型
+
+<el-tag>v0.1.17</el-tag> 版本新增气泡确认框 [ElPopconfirm](https://element-plus.org/zh-CN/component/popconfirm.html)
+
+设置表格属性 `actionBar.confirmType` 为 `popconfirm` 即可生效，示例： `<PlusTable :action-bar="{ confirmType: 'popconfirm'}" />`
+
+操作栏二次确认类型配置`confirmType`默认值为`messageBox`即 [ElMessageBox.confirm](https://element-plus.org/zh-CN/component/message-box.html)
+
+:::demo
+
+table/action-bar-popconfirm
 
 :::
 
