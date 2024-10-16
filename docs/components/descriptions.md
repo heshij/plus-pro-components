@@ -1,6 +1,6 @@
 # Descriptions 描述列表
 
-[描述列表 ](/components/descriptions.html) 是在 [PlusDisplayItem ](/components/display-item.html) 组件上上构建而来， 支持其属性、方法 、定义函数和插槽。
+[描述列表 ](/components/descriptions.html) 是在 [PlusDisplayItem ](/components/display-item.html) 组件上构建而来， 支持其属性、方法 、定义函数和插槽。
 
 ## 基础用法
 
