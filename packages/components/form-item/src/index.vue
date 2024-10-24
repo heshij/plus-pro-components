@@ -429,13 +429,15 @@ const getChildrenProps = (item: OptionsRow) => {
   }
 }
 
+const index = computed(() => params.value.index ?? props.index)
+
 /**
  * 监听formItemProps
  */
 watch(
-  () => props.formItemProps,
-  val => {
-    getCustomProps(val, state.value, props, props.index, 'formItemProps')
+  () => [props.formItemProps, state.value],
+  () => {
+    getCustomProps(props.formItemProps, state.value, unref(params), unref(index), 'formItemProps')
       .then(data => {
         customFormItemProps.value = data
       })
@@ -445,7 +447,8 @@ watch(
   },
   {
     immediate: true,
-    deep: true
+    deep: true,
+    flush: 'post'
   }
 )
 
@@ -453,9 +456,9 @@ watch(
  * 监听fieldProps
  */
 watch(
-  () => props.fieldProps,
-  val => {
-    getCustomProps(val, state.value, props, props.index, 'fieldProps')
+  () => [props.fieldProps, state.value],
+  () => {
+    getCustomProps(props.fieldProps, state.value, unref(params), unref(index), 'fieldProps')
       .then(data => {
         customFieldProps.value = data
         customFieldPropsIsReady.value = true
@@ -466,7 +469,8 @@ watch(
   },
   {
     immediate: true,
-    deep: true
+    deep: true,
+    flush: 'post'
   }
 )
 
