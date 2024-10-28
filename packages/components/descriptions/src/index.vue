@@ -4,7 +4,7 @@
     :column="column"
     class="plus-description"
     :class="{ 'no-border': !border }"
-    border
+    :border="elBorder"
     v-bind="$attrs"
   >
     <slot>
@@ -170,6 +170,8 @@ const props = withDefaults(defineProps<PlusDescriptionsProps>(), {
 const emit = defineEmits<PlusDescriptionsEmits>()
 
 const plusDisplayItemInstance = ref<PlusDisplayItemInstance[] | null>()
+
+const elBorder = computed(() => (props.editable ? true : props.border))
 
 /**
  * 表单的ref
