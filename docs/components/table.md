@@ -148,6 +148,10 @@ table/title-bar
 
 ## 拖动排序行
 
+::: warning 注意
+拖动排序行对应的 [el-table-column](https://element-plus.org/zh-CN/component/table.html#table-column-%E5%B1%9E%E6%80%A7) 的 props，使用[dragSortableTableColumnProps](/components/table.html#table-attributes) 属性配置。
+:::
+
 配置`drag-sortable`，同时配合`dragSortEnd`使用。
 
 :::demo
@@ -180,6 +184,10 @@ table/pagination
 
 ## 序号栏
 
+::: warning 注意
+序号栏对应的 [el-table-column](https://element-plus.org/zh-CN/component/table.html#table-column-%E5%B1%9E%E6%80%A7) 的 props，使用[indexTableColumnProps](/components/table.html#table-attributes) 属性配置。
+:::
+
 默认不显示。配置`hasIndexColumn` 为 `true`即可。 配置`indexContentStyle` 可定制序号栏样式。使用`indexTableColumnProps` 为序号栏配置[el-table-column](https://element-plus.org/zh-CN/component/table.html#table-column-%E5%B1%9E%E6%80%A7)属性。
 
 :::demo
@@ -190,10 +198,28 @@ table/index-column
 
 ## 多选
 
+::: warning 注意
+多选栏对应的 [el-table-column](https://element-plus.org/zh-CN/component/table.html#table-column-%E5%B1%9E%E6%80%A7) 的 props，使用[selectionTableColumnProps](/components/table.html#table-attributes) 属性配置。
+:::
+
 配置`is-selection`属性为`true`，即可显示表格多选框。默认值`false`。配合 [el-table ](https://element-plus.org/zh-CN/component/table.html#table-%E4%BA%8B%E4%BB%B6)`selection-change` 事件使用。
 :::demo
 
 table/multiple
+
+:::
+
+## 展开行
+
+::: warning 注意
+展开行栏对应的[el-table-column](https://element-plus.org/zh-CN/component/table.html#table-column-%E5%B1%9E%E6%80%A7) 的 props，使用[expandTableColumnProps](/components/table.html#table-attributes) 属性配置。
+:::
+
+配置`has-expand`属性 `true` 可显示展开行，默认值 `false`。配合插槽 `expand` 使用。
+
+:::demo
+
+table/expand
 
 :::
 
@@ -213,23 +239,13 @@ table/tree
 
 :::
 
-## 展开行
-
-配置`has-expand`属性 `true` 可显示展开行，默认值 `false`。配合插槽 `expand` 使用。
-
-:::demo
-
-table/expand
-
-:::
-
 ## 多级表头
 
 <el-tag>v0.1.7</el-tag>
 
 数据结构比较复杂的时候，可使用多级表头来展现数据的层次关系。
 
-只需要将 el-table-column 放置于 el-table-column 中，就可以实现组头。
+只需要将 [el-table-column](https://element-plus.org/zh-CN/component/table.html#table-column-%E5%B1%9E%E6%80%A7) 放置于[el-table-column](https://element-plus.org/zh-CN/component/table.html#table-column-%E5%B1%9E%E6%80%A7) 中，就可以实现组头。
 
 :::demo
 
