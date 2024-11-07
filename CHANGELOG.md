@@ -1,3 +1,14 @@
+## [v0.1.18](https://github.com/plus-pro-components/plus-pro-components/compare/v0.1.17...v0.1.18) (2024-11-07)
+
+### ✨ Features
+
+- **components:** :sparkles: form add clearable props([23cdb96](https://github.com/plus-pro-components/plus-pro-components/commit/23cdb96)) by@xiaofei
+- **components:** :sparkles: descriptions support el-descriptions border([590ce6d](https://github.com/plus-pro-components/plus-pro-components/commit/590ce6d)) by@xiaofei
+
+### 🐛 Bug Fixes
+
+- **components:** :bug: fix fieldProps callback params index error([d6bda14](https://github.com/plus-pro-components/plus-pro-components/commit/d6bda14)) by@xiaofei
+
 ## [v0.1.17](https://github.com/plus-pro-components/plus-pro-components/compare/v0.1.16...v0.1.17) (2024-10-11)
 
 ### ✨ Features
