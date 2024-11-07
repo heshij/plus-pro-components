@@ -58,7 +58,7 @@
         v-model="state"
         :placeholder="t('plus.field.pleaseSelect') + labelValue"
         class="plus-form-item-field"
-        clearable
+        :clearable="clearable"
         v-bind="customFieldProps"
         @update:modelValue="handleChange"
       >
@@ -94,7 +94,7 @@
           ref="fieldInstance"
           v-model="state"
           class="plus-form-item-field"
-          clearable
+          :clearable="clearable"
           v-bind="commonProps"
           @update:modelValue="handleChange"
         >
@@ -134,7 +134,7 @@
           ref="fieldInstance"
           v-model="state"
           class="plus-form-item-field"
-          clearable
+          :clearable="clearable"
           :field-children-slot="fieldChildrenSlot"
           v-bind="commonProps"
           @update:modelValue="handleChange"
@@ -170,7 +170,7 @@
         class="plus-form-item-field"
         :placeholder="t('plus.field.pleaseEnter') + labelValue"
         autocomplete="off"
-        clearable
+        :clearable="clearable"
         v-bind="customFieldProps"
         @update:modelValue="handleChange"
       >
@@ -246,6 +246,10 @@ export interface PlusFormItemProps {
    */
   optionsMap?: PlusColumn['optionsMap']
   index?: number
+  /**
+   *  @version v0.1.18
+   */
+  clearable?: boolean
 }
 export interface PlusFormItemEmits {
   (e: 'update:modelValue', value: FieldValueType): void
@@ -280,6 +284,7 @@ const props = withDefaults(defineProps<PlusFormItemProps>(), {
   renderLabel: undefined,
   fieldChildrenSlot: undefined,
   optionsMap: undefined,
+  clearable: true,
   index: 0
 })
 const emit = defineEmits<PlusFormItemEmits>()

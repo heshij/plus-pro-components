@@ -8,6 +8,7 @@
         <PlusFormItem
           :model-value="getModelValue(item.prop)"
           v-bind="item"
+          :clearable="clearable"
           :has-label="getHasLabel(item.hasLabel)"
           @change="value => handleChange(value, item)"
         >
@@ -92,6 +93,10 @@ export interface PlusFormContentProps {
    * @version v0.1.15
    */
   collapseTransition?: boolean
+  /**
+   *  @version v0.1.18
+   */
+  clearable?: boolean
 }
 
 export interface PlusFormContentEmits {
@@ -110,7 +115,8 @@ const props = withDefaults(defineProps<PlusFormContentProps>(), {
   colProps: () => ({}),
   columns: () => [],
   collapseDuration: undefined,
-  collapseTransition: undefined
+  collapseTransition: undefined,
+  clearable: true
 })
 const emit = defineEmits<PlusFormContentEmits>()
 

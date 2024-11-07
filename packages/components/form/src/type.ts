@@ -126,6 +126,10 @@ export type PlusFormSelfProps = {
    * @version v0.1.15
    */
   collapseTransition?: boolean
+  /**
+   *  @version v0.1.18
+   */
+  clearable?: boolean
 }
 
 export type PlusFormProps = PlusFormSelfProps & Partial<ElementPlusFormProps> & RecordType

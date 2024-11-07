@@ -46,6 +46,7 @@
             :has-label="hasLabel"
             :collapse-transition="collapseTransition"
             :collapse-duration="collapseDuration"
+            :clearable="clearable"
             @change="handleChange"
           >
             <!--表单项label插槽 -->
@@ -81,6 +82,7 @@
           :has-label="hasLabel"
           :collapse-transition="collapseTransition"
           :collapse-duration="collapseDuration"
+          :clearable="clearable"
           @change="handleChange"
         >
           <!--表单项label插槽 -->
@@ -171,7 +173,8 @@ const props = withDefaults(defineProps<PlusFormSelfProps>(), {
   cardProps: () => ({}),
   prevent: false,
   collapseDuration: undefined,
-  collapseTransition: undefined
+  collapseTransition: undefined,
+  clearable: true
 })
 const emit = defineEmits<PlusFormEmits>()
 
