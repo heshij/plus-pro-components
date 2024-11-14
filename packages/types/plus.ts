@@ -267,6 +267,11 @@ export interface CommonType {
    * PlusSearch 查询表单中的权重，权重大排序靠前，在PlusPage组件中非常有用
    */
   order?: number | ComputedRef<number>
+  /**
+   * @version 0.1.19
+   * 多级表头
+   */
+  children?: PlusColumn[]
 }
 
 /**
