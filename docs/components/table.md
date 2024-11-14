@@ -253,6 +253,15 @@ table/multiple-table-header
 
 :::
 
+<el-tag>v0.1.19</el-tag> 新增
+在 [columns](/components/config.html) 配置添加 [children](/components/config.html) 属性， 即可实现无限极表头。
+
+:::demo
+
+table/multiple-level-header
+
+:::
+
 ## 表格显示单项插槽配置
 
 组件提供 `fieldSlots` 对象可以简易配置表格显示单项插槽， `fieldSlots` 的插槽配置是根据表格的 [valueType](/components/config.html#valuetype-可选的显示值) 自动进行匹配的，
