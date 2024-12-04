@@ -1,33 +1,35 @@
 <template>
   <!-- 表单第一优先级 -->
-  <PlusForm
-    v-if="isEdit"
-    ref="formInstance"
-    v-model="modelValues"
-    :model="modelValues"
-    :columns="columns"
-    :has-footer="false"
-    :has-label="false"
-    v-bind="column.formProps || formProps"
-    class="plus-display-item__form"
-    @change="handleChange"
-  >
-    <!--表单单项的插槽 -->
-    <template
-      v-if="$slots[getFieldSlotName(column.prop)]"
-      #[getFieldSlotName(column.prop)]="scoped"
+  <template v-if="isEdit">
+    <PlusForm
+      v-if="customFormPropsIsReady"
+      ref="formInstance"
+      v-model="modelValues"
+      :model="modelValues"
+      :columns="columns"
+      :has-footer="false"
+      :has-label="false"
+      v-bind="{ ...customFormProps, ...formProps }"
+      class="plus-display-item__form"
+      @change="handleChange"
     >
-      <slot :name="getFieldSlotName(column.prop)" v-bind="scoped" />
-    </template>
+      <!--表单单项的插槽 -->
+      <template
+        v-if="$slots[getFieldSlotName(column.prop)]"
+        #[getFieldSlotName(column.prop)]="scoped"
+      >
+        <slot :name="getFieldSlotName(column.prop)" v-bind="scoped" />
+      </template>
 
-    <!-- 表单el-form-item 下一行额外的内容 的插槽 -->
-    <template
-      v-if="$slots[getExtraSlotName(column.prop)]"
-      #[getExtraSlotName(column.prop)]="scoped"
-    >
-      <slot :name="getExtraSlotName(column.prop)" v-bind="scoped" />
-    </template>
-  </PlusForm>
+      <!-- 表单el-form-item 下一行额外的内容 的插槽 -->
+      <template
+        v-if="$slots[getExtraSlotName(column.prop)]"
+        #[getExtraSlotName(column.prop)]="scoped"
+      >
+        <slot :name="getExtraSlotName(column.prop)" v-bind="scoped" />
+      </template>
+    </PlusForm>
+  </template>
 
   <!-- 自定义显示 -->
   <template v-else-if="column.render && isFunction(column.render)">
@@ -243,11 +245,16 @@ const props = withDefaults(defineProps<PlusDisplayItemProps>(), {
 const emit = defineEmits<PlusTableTableColumnEmits>()
 
 const customFieldProps = ref<RecordType>({})
+const customFieldPropsIsReady = ref(false)
+
+const customFormProps = ref<RecordType>({})
+const customFormPropsIsReady = ref(false)
+
 const formInstance = ref()
 const { customOptions: options } = useGetOptions(props.column)
 const columns: Ref<PlusColumn[]> = ref([])
 const subRow = ref(cloneDeep(props.row))
-const customFieldPropsIsReady = ref(false)
+
 const isEdit = ref(false)
 const falseArray = [false, 'click', 'dblclick']
 const statusValueTypes: (string | undefined)[] = ['select', 'radio', 'checkbox']
@@ -475,6 +482,30 @@ watch(
       .then(data => {
         customFieldProps.value = data
         customFieldPropsIsReady.value = true
+      })
+      .catch(err => {
+        throw err
+      })
+  },
+  {
+    immediate: true,
+    deep: true
+  }
+)
+
+watch(
+  () => [props.column.formProps, subRow.value],
+  () => {
+    getCustomProps(
+      props.column.formProps,
+      displayValue.value,
+      subRow.value,
+      props.index,
+      'formProps'
+    )
+      .then(data => {
+        customFormProps.value = data
+        customFormPropsIsReady.value = true
       })
       .catch(err => {
         throw err

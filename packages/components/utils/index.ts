@@ -60,7 +60,7 @@ export const getCustomProps = async (
   value: FieldValueType | undefined,
   row: RecordType,
   index: number,
-  type: 'formItemProps' | 'fieldProps'
+  type: 'formItemProps' | 'fieldProps' | 'formProps'
 ): Promise<any> => {
   try {
     let data: RecordType = {}
