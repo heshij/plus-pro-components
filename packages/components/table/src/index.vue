@@ -93,11 +93,8 @@
 
           <!--配置渲染栏  -->
           <PlusTableColumn
-            v-for="(item, index) in subColumns"
-            :key="getKey(item)"
+            :columns="subColumns"
             :editable="editable"
-            :item="item"
-            :index="index"
             @formChange="handleFormChange"
           >
             <!--表格单元格表头的插槽 -->
@@ -217,8 +214,7 @@ import {
   getExtraSlotName,
   filterSlots,
   isSVGElement,
-  isPlainObject,
-  getTableKey
+  isPlainObject
 } from '@plus-pro-components/components/utils'
 import { cloneDeep, debounce } from 'lodash-es'
 import PlusTableActionBar from './table-action-bar.vue'
@@ -414,14 +410,6 @@ const handleCellEdit = (row: RecordType, column: PlusColumn, type: 'click' | 'db
     )
   }
 }
-
-/**
- * 获取key
- * @param item
- */
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const getKey = (item: PlusColumn) => getTableKey(item, true)
 
 const handleClickCell = (
   row: RecordType,
