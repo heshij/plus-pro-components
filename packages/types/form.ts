@@ -211,9 +211,19 @@ export interface FormColumnProps {
   /**
    * @desc 传递给 PlusForm的配置， 支持所有 el-form的props。值支持对象object。
    * @version 0.1.17 新增
-   * @version 0.1.19  新增 computed，函数和Promise 支持
+   * @version 0.1.19  新增 computed，函数支持，不支持Promise
    */
-  formProps?: PropsItemType<PlusFormProps>
+  formProps?:
+    | Partial<PlusFormProps>
+    | ComputedRef<Partial<PlusFormProps>>
+    | ((
+        value: FieldValueType,
+        data: {
+          row: Record<string, any>
+          index: number
+        }
+      ) => Partial<PlusFormProps>)
+
   /**
    * @desc 传递给 el-form-item 的配置， 支持所有 el-form-item的props。值支持对象 object，computed，函数和 Promise。
    */

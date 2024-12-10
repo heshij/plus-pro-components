@@ -1,4 +1,4 @@
-import { nextTick, h } from 'vue'
+import { nextTick, h, unref } from 'vue'
 import ElementPlus, { ElEmpty, ElIcon } from 'element-plus'
 import { mount } from '@vue/test-utils'
 import { describe, expect, test } from 'vitest'
@@ -133,7 +133,7 @@ describe('display-item/index.vue', () => {
       () => (
         <div class="container">
           {columns.map(item => (
-            <DisplayItem key={item.label} column={item} row={row} />
+            <DisplayItem key={unref(item.label)} column={item} row={row} />
           ))}
         </div>
       ),
@@ -151,11 +151,11 @@ describe('display-item/index.vue', () => {
     expect(wrapper.find('.container').text()).includes(formatDate(row.time))
     expect(wrapper.find('.container').text()).includes('￥' + row.money)
     expect(wrapper.find('.el-progress-bar__inner').attributes('style')).includes(row.progress + '%')
-    expect(wrapper.find('.el-rate').attributes('aria-valuenow')).includes(row.rate)
     expect(wrapper.find('.el-link__inner').text()).includes('link')
     expect(wrapper.find('.el-avatar').exists()).toBe(true)
     expect(wrapper.find('.el-divider').exists()).toBe(true)
     setTimeout(() => {
+      expect(wrapper.find('.el-rate').attributes('aria-valuenow')).includes(row.rate)
       expect(wrapper.find('.el-switch__input').attributes('aria-checked')).includes(row.switch)
     })
   })

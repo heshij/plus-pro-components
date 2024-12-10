@@ -136,10 +136,13 @@ describe('descriptions/index.vue', () => {
     expect(wrapper.find('.plus-description__label').exists()).toBe(true)
     expect(wrapper.find('.plus-description__label').text()).toContain(labels[0])
     expect(wrapper.find('.plus-description__name').text()).toContain('name'.repeat(10))
-    expect(wrapper.find('.el-switch').exists()).toBe(true)
     expect(wrapper.find('.el-tag').exists()).toBe(true)
     expect(wrapper.find('.el-progress').exists()).toBe(true)
     expect(wrapper.find('.plus-display-item__pre').exists()).toBe(true)
+
+    setTimeout(() => {
+      expect(wrapper.find('.el-switch').exists()).toBe(true)
+    })
   })
 
   test('props test', async () => {

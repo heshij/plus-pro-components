@@ -18,7 +18,7 @@
           :label-class-name="
             (item.descriptionsItemProps?.labelClassName || '') +
             ' plus-description__label' +
-            (getIsRequired(item) ? ' is-required' : '')
+            (getIsRequired(item, index) ? ' is-required' : '')
           "
           v-bind="item.descriptionsItemProps || descriptionsItemProps"
         >
@@ -213,8 +213,11 @@ watch(
  * 判断是否是required
  * @param item
  */
-const getIsRequired = (item: PlusColumn) => {
-  const rules = Reflect.get(item.formProps?.rules || props.formProps?.rules || {}, item.prop) || {}
+const getIsRequired = (item: PlusColumn, index: number) => {
+  const itemFormProps = isFunction(item.formProps)
+    ? item.formProps(props.data[item.prop], { row: props.data, index })
+    : unref(item.formProps)
+  const rules = Reflect.get(itemFormProps?.rules || props.formProps?.rules || {}, item.prop) || {}
   const isRequired = Object.values(rules).some(i => i.required)
   return isRequired
 }
