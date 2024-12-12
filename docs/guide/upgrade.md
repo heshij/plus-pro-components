@@ -2,6 +2,12 @@
 
 本记录只记录影响较大变更，对于一般[新功能、性能提升和问题修复](/guide/changelog.html)不在此记录。
 
+## 从 v0.1.18 升级到 v0.1.19
+
+- [PlusLayout](/components/layout.html) 布局样式发生变化，注意适配。
+
+<el-divider />
+
 ## 从 v0.1.14 升级到 v0.1.15
 
 - [PlusSearch](/components/search.html#search-attributes) 新增了折叠动画
