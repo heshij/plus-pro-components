@@ -1,3 +1,16 @@
+## [v0.1.19](https://github.com/plus-pro-components/plus-pro-components/compare/v0.1.18...v0.1.19) (2024-12-12)
+
+### ✨ Features
+
+- **components:** :sparkles: optimize layout components([d6e5f60](https://github.com/plus-pro-components/plus-pro-components/commit/d6e5f60)) by@xiaofei
+- **components:** :sparkles: formProps remove Promise type([d70b509](https://github.com/plus-pro-components/plus-pro-components/commit/d70b509)) by@xiaofei
+- **components:** :sparkles: plusColumn formProps add computed,function and promise support.([6e59b41](https://github.com/plus-pro-components/plus-pro-components/commit/6e59b41)) by@xiaofei
+- **components:** :sparkles: support rendering multi-level headers through columns configuration([3b5e8c8](https://github.com/plus-pro-components/plus-pro-components/commit/3b5e8c8)) by@xiaofei
+
+### 🐛 Bug Fixes
+
+- **components:** :bug: fix formRefs is empty([dbabdf4](https://github.com/plus-pro-components/plus-pro-components/commit/dbabdf4)) by@xiaofei
+
 ## [v0.1.18](https://github.com/plus-pro-components/plus-pro-components/compare/v0.1.17...v0.1.18) (2024-11-07)
 
 ### ✨ Features
