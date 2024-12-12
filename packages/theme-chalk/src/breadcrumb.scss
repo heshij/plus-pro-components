@@ -2,4 +2,8 @@
 
 @include b(breadcrumb) {
   margin-bottom: 8px;
+
+  &.no-data {
+    margin-bottom: 0;
+  }
 }

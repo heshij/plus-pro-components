@@ -13,12 +13,16 @@ $layout-height: calc(100vh - var(--plus-header-height));
     flex-direction: column;
   }
 
-  .#{$el-namespace + -main} {
-    height: $layout-height;
-    padding-right: 10px;
-  }
-
   .#{$plus-namespace + -sidebar} {
     height: $layout-height;
+  }
+
+  .#{$plus-namespace + -layout-main} {
+    height: $layout-height;
+    flex: 1;
+  }
+
+  .#{$plus-namespace + -layout-content} {
+    padding-right: 10px;
   }
 }

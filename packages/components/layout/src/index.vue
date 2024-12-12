@@ -38,30 +38,32 @@
       </PlusSidebar>
 
       <!-- 主内容 -->
-      <el-main>
-        <el-scrollbar class="plus-layout-main__scrollbar" v-bind="scrollbarProps">
-          <!-- 面包屑上方 -->
-          <template v-if="$slots['layout-extra']">
-            <slot name="layout-extra" />
+      <main class="plus-layout-main">
+        <!-- 面包屑上方 -->
+        <div v-if="$slots['layout-extra']" class="plus-layout-extra">
+          <slot name="layout-extra" />
+        </div>
+
+        <!-- 面包屑 -->
+        <PlusBreadcrumb v-if="hasBreadcrumb" v-bind="breadcrumbProps" ref="plusBreadcrumbInstance">
+          <!-- 面包屑title 插槽 -->
+          <template v-if="$slots['breadcrumb-item-title']" #breadcrumb-item-title="data">
+            <slot name="breadcrumb-item-title" v-bind="data" />
           </template>
+        </PlusBreadcrumb>
 
-          <!-- 面包屑 -->
-          <PlusBreadcrumb v-if="hasBreadcrumb" v-bind="breadcrumbProps">
-            <!-- 面包屑title 插槽 -->
-            <template v-if="$slots['breadcrumb-item-title']" #breadcrumb-item-title="data">
-              <slot name="breadcrumb-item-title" v-bind="data" />
-            </template>
-          </PlusBreadcrumb>
+        <el-main class="plus-layout-content" :style="{ height }">
+          <el-scrollbar class="plus-layout-main__scrollbar" v-bind="scrollbarProps">
+            <slot />
 
-          <slot />
-
-          <el-backtop
-            v-if="backtop"
-            v-bind="backtopProps"
-            target=".plus-layout .plus-layout-main__scrollbar"
-          />
-        </el-scrollbar>
-      </el-main>
+            <el-backtop
+              v-if="backtop"
+              v-bind="backtopProps"
+              target=".plus-layout .plus-layout-main__scrollbar"
+            />
+          </el-scrollbar>
+        </el-main>
+      </main>
     </el-container>
   </el-container>
 </template>
@@ -78,7 +80,7 @@ import type { ScrollbarProps, BacktopProps } from 'element-plus'
 import { ElContainer, ElMain, ElScrollbar, ElBacktop } from 'element-plus'
 import type { Mutable, RecordType } from '@plus-pro-components/types'
 import type { Component } from 'vue'
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 
 export interface PlusLayoutProps {
   /**
@@ -124,11 +126,26 @@ const PlusBreadcrumb: Component = PlusBreadcrumbComponent
 const PlusSidebar: Component = PlusSidebarComponent
 const PlusHeader: Component = PlusHeaderComponent
 
+const height = ref('100%')
 const plusSidebarInstance = ref<PlusSidebarInstance | null>()
+const plusBreadcrumbInstance = ref()
 
 const backtopProps = computed(
   () => (isPlainObject(props.backtop) ? props.backtop : {}) as RecordType
 )
+
+const setHeight = () => {
+  if (props.hasBreadcrumb && plusBreadcrumbInstance.value?.$el) {
+    requestAnimationFrame(() => {
+      const bottom = plusBreadcrumbInstance.value?.$el?.getBoundingClientRect().bottom
+      height.value = `calc(100% - ${bottom}px + var(--plus-header-height))`
+    })
+  }
+}
+
+onMounted(() => {
+  setHeight()
+})
 
 defineExpose({
   plusSidebarInstance

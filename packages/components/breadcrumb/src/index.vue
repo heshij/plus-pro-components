@@ -1,5 +1,11 @@
 <template>
-  <el-breadcrumb v-bind="$attrs" class="plus-breadcrumb">
+  <el-breadcrumb
+    v-bind="$attrs"
+    class="plus-breadcrumb"
+    :class="{
+      'no-data': breadcrumbList.length === 0
+    }"
+  >
     <el-breadcrumb-item
       v-for="item in breadcrumbList"
       :key="item.path"
