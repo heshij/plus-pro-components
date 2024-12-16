@@ -2,6 +2,11 @@
 
 InputTag 组件由 [ElTag](https://element-plus.org/zh-CN/component/tag.html) 和[ElInput](https://element-plus.org/zh-CN/component/input.html) 组成。
 
+::: tip 提示
+
+element-plus 官方已经在<el-tag>v2.9.0</el-tag>版本中支持了 [input-tag](https://element-plus.org/zh-CN/component/input-tag.html) 组件。
+:::
+
 ## 基础用法
 
 :::demo
