@@ -20,6 +20,7 @@ $layout-height: calc(100vh - var(--plus-header-height));
   .#{$plus-namespace + -layout-main} {
     height: $layout-height;
     flex: 1;
+    max-width: calc(100vw - var(--plus-sidebar-width, 200px));
   }
 
   .#{$plus-namespace + -layout-content} {
