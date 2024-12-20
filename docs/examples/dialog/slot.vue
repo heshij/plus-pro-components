@@ -3,7 +3,7 @@
 
   <PlusDialog
     v-model="show"
-    header="标题"
+    title="标题"
     cancel-text="取消"
     confirm-text="确定"
     @confirm="handleConfirm"
