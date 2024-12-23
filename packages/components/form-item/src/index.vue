@@ -50,6 +50,7 @@
         v-else-if="$slots[getFieldSlotName(prop)]"
         :name="getFieldSlotName(prop)"
         v-bind="params"
+        :column="props"
       />
 
       <el-select
