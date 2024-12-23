@@ -1,12 +1,6 @@
 <template>
-  <el-table-column
-    key="actionBar"
-    class-name="plus-table-action-bar"
-    :label="unref(label) || t('plus.table.action')"
-    :fixed="fixed || 'right'"
-    :width="width || 200"
-    v-bind="actionBarTableColumnProps"
-  >
+  <el-table-column key="actionBar" class-name="plus-table-action-bar" :label="unref(label) || t('plus.table.action')"
+    :fixed="fixed || 'right'" :width="width || 200" v-bind="actionBarTableColumnProps">
     <template #default="{ row, $index, ...rest }">
       <!-- 显示出来的按钮 -->
       <template v-for="buttonRow in getSubButtons(row, $index).preButtons" :key="buttonRow.text">
@@ -14,26 +8,22 @@
       </template>
 
       <!-- 隐藏的按钮 -->
-      <el-dropdown
-        v-if="getSubButtons(row, $index).showMore"
-        trigger="click"
-        class="plus-table-action-bar__dropdown"
-        :hide-on-click="hideOnClick"
-      >
+      <el-dropdown v-if="getSubButtons(row, $index).showMore" trigger="click" class="plus-table-action-bar__dropdown"
+        :hide-on-click="hideOnClick">
         <span class="plus-table-action-bar__dropdown__link">
           <span class="plus-table-action-bar__more-text"> {{ t('plus.table.more') }}</span>
           <slot name="action-bar-more-icon">
-            <el-icon> <ArrowDownBold /> </el-icon>
+            <el-icon>
+              <ArrowDownBold />
+            </el-icon>
           </slot>
         </span>
 
         <!-- 下拉按钮 -->
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item
-              v-for="buttonRow in getSubButtons(row, $index).nextButtons"
-              :key="(unref(buttonRow.text) as string)"
-            >
+            <el-dropdown-item v-for="buttonRow in getSubButtons(row, $index).nextButtons"
+              :key="(unref(buttonRow.text) as string)">
               <component :is="render(row, buttonRow, $index, rest)" />
             </el-dropdown-item>
           </el-dropdown-menu>
@@ -81,6 +71,11 @@ export interface ActionBarProps {
    */
   showNumber?: number
   /**
+   * 更多按钮显示策略
+   * @default true
+   */
+  showLimitIncludeMore?: boolean
+  /**
    * 操作按钮的类型   默认值为 `'link'`
    */
   type?: 'icon' | 'button' | 'link'
@@ -101,6 +96,7 @@ export interface ActionBarProps {
    * @version v0.1.17
    */
   confirmType?: 'messageBox' | 'popconfirm'
+
 }
 export interface PlusTableActionBarEmits {
   (e: 'clickAction', data: ButtonsCallBackParams): void
@@ -127,7 +123,8 @@ const props = withDefaults(defineProps<ActionBarProps>(), {
   width: 200,
   showNumber: 3,
   actionBarTableColumnProps: () => ({}),
-  confirmType: 'messageBox'
+  confirmType: 'messageBox',
+  showLimitIncludeMore: true
 })
 const emit = defineEmits<PlusTableActionBarEmits>()
 
@@ -151,16 +148,26 @@ const getSubButtons = (row: RecordType, index: number) => {
     }
     return unref(item.show) !== false
   })
-  // 获取'更多'之前的按钮组
-  const preButtons = data.slice(0, props.showNumber)
-  // 获取'更多'之后的按钮组
-  const nextButtons = data.slice(props.showNumber)
   //  显示更多
   const showMore = data.length > props.showNumber
+  if (!showMore) {
+    return {
+      showMore,
+      preButtons: data,
+      nextButtons: []
+    }
+  }
+  if (props.showLimitIncludeMore) {
+    return {
+      showMore,
+      preButtons: data.slice(0, props.showNumber - 1),
+      nextButtons: data.slice(props.showNumber - 1)
+    }
+  }
   return {
     showMore,
-    preButtons,
-    nextButtons
+    preButtons: data.slice(0, props.showNumber),
+    nextButtons: data.slice(props.showNumber)
   }
 }
 
@@ -250,57 +257,57 @@ const render = (
       () =>
         props.confirmType === 'popconfirm' && buttonRow.confirm
           ? h(
-              'span',
+            'span',
+            {
+              class: 'el-icon'
+            },
+            h(
+              ElPopconfirm,
               {
-                class: 'el-icon'
+                trigger: 'click',
+                ...(isPlainObject(buttonRow.confirm) ? buttonRow.confirm?.popconfirmProps : {}),
+                title: msg.message,
+                onConfirm: (event: MouseEvent) => handleConfirm({ ...callbackParams, e: event }),
+                onCancel: (event: MouseEvent) => handleCancel({ ...callbackParams, e: event })
               },
-              h(
-                ElPopconfirm,
-                {
-                  trigger: 'click',
-                  ...(isPlainObject(buttonRow.confirm) ? buttonRow.confirm?.popconfirmProps : {}),
-                  title: msg.message,
-                  onConfirm: (event: MouseEvent) => handleConfirm({ ...callbackParams, e: event }),
-                  onCancel: (event: MouseEvent) => handleCancel({ ...callbackParams, e: event })
-                },
-                {
-                  reference: () =>
-                    withDirectives(
-                      h(
-                        ElIcon,
-                        {
-                          size: 16,
-                          style: { margin: 0 },
-                          ...buttonRowProps,
-                          onClick: () => {
-                            // 控制下拉不隐藏，防止气泡定位异常
-                            hideOnClick.value = false
+              {
+                reference: () =>
+                  withDirectives(
+                    h(
+                      ElIcon,
+                      {
+                        size: 16,
+                        style: { margin: 0 },
+                        ...buttonRowProps,
+                        onClick: () => {
+                          // 控制下拉不隐藏，防止气泡定位异常
+                          hideOnClick.value = false
 
-                            if (isFunction(buttonRow.onClick)) {
-                              buttonRow.onClick(callbackParams)
-                            }
+                          if (isFunction(buttonRow.onClick)) {
+                            buttonRow.onClick(callbackParams)
                           }
-                        },
-                        () => (buttonRow.icon ? h(buttonRow.icon) : '')
-                      ),
-                      buttonRow.directives || []
-                    )
-                }
-              )
+                        }
+                      },
+                      () => (buttonRow.icon ? h(buttonRow.icon) : '')
+                    ),
+                    buttonRow.directives || []
+                  )
+              }
             )
+          )
           : withDirectives(
-              h(
-                ElIcon,
-                {
-                  size: 16,
-                  ...buttonRowProps,
-                  onClick: (event: MouseEvent) =>
-                    handleClickAction({ ...callbackParams, e: event }, msg)
-                },
-                () => (buttonRow.icon ? h(buttonRow.icon) : '')
-              ),
-              buttonRow.directives || []
-            )
+            h(
+              ElIcon,
+              {
+                size: 16,
+                ...buttonRowProps,
+                onClick: (event: MouseEvent) =>
+                  handleClickAction({ ...callbackParams, e: event }, msg)
+              },
+              () => (buttonRow.icon ? h(buttonRow.icon) : '')
+            ),
+            buttonRow.directives || []
+          )
     )
   } else {
     const Tag: Component = props.type === 'button' ? ElButton : ElLink
@@ -310,52 +317,52 @@ const render = (
 
     return props.confirmType === 'popconfirm' && buttonRow.confirm
       ? h(
-          ElPopconfirm,
-          {
-            trigger: 'click',
-            ...(isPlainObject(buttonRow.confirm) ? buttonRow.confirm?.popconfirmProps : {}),
-            title: msg.message,
-            onConfirm: (event: MouseEvent) => handleConfirm({ ...callbackParams, e: event }),
-            onCancel: (event: MouseEvent) => handleCancel({ ...callbackParams, e: event })
-          },
-          {
-            reference: () =>
-              withDirectives(
-                h(
-                  Tag,
-                  {
-                    size: 'small',
-                    ...defaultProps,
-                    ...buttonRowProps,
-                    onClick: () => {
-                      // 控制下拉不隐藏，防止气泡定位异常
-                      hideOnClick.value = false
+        ElPopconfirm,
+        {
+          trigger: 'click',
+          ...(isPlainObject(buttonRow.confirm) ? buttonRow.confirm?.popconfirmProps : {}),
+          title: msg.message,
+          onConfirm: (event: MouseEvent) => handleConfirm({ ...callbackParams, e: event }),
+          onCancel: (event: MouseEvent) => handleCancel({ ...callbackParams, e: event })
+        },
+        {
+          reference: () =>
+            withDirectives(
+              h(
+                Tag,
+                {
+                  size: 'small',
+                  ...defaultProps,
+                  ...buttonRowProps,
+                  onClick: () => {
+                    // 控制下拉不隐藏，防止气泡定位异常
+                    hideOnClick.value = false
 
-                      if (isFunction(buttonRow.onClick)) {
-                        buttonRow.onClick(callbackParams)
-                      }
+                    if (isFunction(buttonRow.onClick)) {
+                      buttonRow.onClick(callbackParams)
                     }
-                  },
-                  () => text
-                ),
-                buttonRow.directives || []
-              )
-          }
-        )
+                  }
+                },
+                () => text
+              ),
+              buttonRow.directives || []
+            )
+        }
+      )
       : withDirectives(
-          h(
-            Tag,
-            {
-              size: 'small',
-              ...defaultProps,
-              ...buttonRowProps,
-              onClick: (event: MouseEvent) =>
-                handleClickAction({ ...callbackParams, e: event }, msg)
-            },
-            () => text
-          ),
-          buttonRow.directives || []
-        )
+        h(
+          Tag,
+          {
+            size: 'small',
+            ...defaultProps,
+            ...buttonRowProps,
+            onClick: (event: MouseEvent) =>
+              handleClickAction({ ...callbackParams, e: event }, msg)
+          },
+          () => text
+        ),
+        buttonRow.directives || []
+      )
   }
 }
 
