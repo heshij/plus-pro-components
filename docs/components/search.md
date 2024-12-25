@@ -26,7 +26,7 @@ search/show-number
 
 ## 展开收缩隐藏
 
-配置 `hasUnfold` 属性为`false`展开收缩隐藏，同时默认值显示所有搜索框。
+配置 `hasUnfold` 属性为`false`展开收缩隐藏，同时默认显示所有搜索框。
 
 :::demo
 
@@ -66,7 +66,7 @@ search/hide-label
 
 ## 异步数据用法
 
-[PlusColumn](/components/config.html) 配置中的 `options` 支持数，函数和 Promise。
+[PlusColumn](/components/config.html) 配置中的 `options` 支持数组，函数和 Promise。
 [PlusColumn](/components/config.html) 配置中的 `fieldProps` 支持对象 object，函数和 Promise。
 
 :::demo
